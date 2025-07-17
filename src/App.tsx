@@ -66,7 +66,7 @@ const App: React.FC = () => {
 
           {/* Route du dashboard utilisateur */}
           <Route 
-            path="/dashboard" 
+            path="/localisation" 
             element={<UserDashboard />} 
           />
 
@@ -100,41 +100,33 @@ const App: React.FC = () => {
             element={<ForgotPasswordPage />} 
           />
 
-          {/* Routes protégées pour les pharmacies */}
+          {/* Routes pour les pharmacies (sans protection) */}
           <Route 
             path="/pharmacy/*" 
             element={
-              isAuthenticated && userRole === 'pharmacy' ? (
-                <AppLayout userRole="pharmacy" userName="Pharmacie">
-                  <Routes>
-                    <Route path="/" element={<PharmacyDashboard />} />
-                    <Route path="/planning" element={<div>Planning des gardes</div>} />
-                    <Route path="/guards" element={<div>Mes gardes</div>} />
-                    <Route path="/profile" element={<div>Profil pharmacie</div>} />
-                  </Routes>
-                </AppLayout>
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              <AppLayout userRole="pharmacy" userName="Pharmacie">
+                <Routes>
+                  <Route path="/" element={<PharmacyDashboard />} />
+                  <Route path="/planning" element={<div>Planning des gardes</div>} />
+                  <Route path="/guards" element={<div>Mes gardes</div>} />
+                  <Route path="/profile" element={<div>Profil pharmacie</div>} />
+                </Routes>
+              </AppLayout>
             } 
           />
 
-          {/* Routes protégées pour les administrateurs */}
+          {/* Routes pour les administrateurs (sans protection) */}
           <Route 
             path="/admin/*" 
             element={
-              isAuthenticated && userRole === 'admin' ? (
-                <AppLayout userRole="admin" userName="Administrateur">
-                  <Routes>
-                    <Route path="/" element={<AdminDashboard />} />
-                    <Route path="/calendar" element={<div>Calendrier complet</div>} />
-                    <Route path="/management" element={<div>Gestion des pharmacies</div>} />
-                    <Route path="/settings" element={<div>Paramètres</div>} />
-                  </Routes>
-                </AppLayout>
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              <AppLayout userRole="admin" userName="Administrateur">
+                <Routes>
+                  <Route path="/" element={<AdminDashboard />} />
+                  <Route path="/calendar" element={<div>Calendrier complet</div>} />
+                  <Route path="/management" element={<div>Gestion des pharmacies</div>} />
+                  <Route path="/settings" element={<div>Paramètres</div>} />
+                </Routes>
+              </AppLayout>
             } 
           />
 
