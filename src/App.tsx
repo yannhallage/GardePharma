@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './components/layout/AppLayout';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import UserDashboard from './pages/UserDashboard';
+import PresentationPage from './pages/PresentationPage';
 
 // Pages pour les pharmacies (à créer)
 const PharmacyDashboard = () => (
@@ -19,6 +21,19 @@ const AdminDashboard = () => (
     <h1 className="text-3xl font-bold text-neutral-800">Espace Administration</h1>
     <p className="text-neutral-600">Gérez les pharmacies et les plannings</p>
     {/* Contenu à développer */}
+  </div>
+);
+
+// Page mot de passe oublié (à créer)
+const ForgotPasswordPage = () => (
+  <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 flex items-center justify-center p-4">
+    <div className="w-full max-w-md text-center">
+      <h1 className="text-3xl font-bold text-neutral-800 mb-4">Mot de passe oublié</h1>
+      <p className="text-neutral-600 mb-8">Cette fonctionnalité sera bientôt disponible</p>
+      <a href="/login" className="text-primary-600 hover:text-primary-500 font-semibold">
+        Retour à la connexion
+      </a>
+    </div>
   </div>
 );
 
@@ -43,14 +58,16 @@ const App: React.FC = () => {
     <Router>
       <div className="App">
         <Routes>
-          {/* Route publique pour les utilisateurs */}
+          {/* Route de présentation */}
           <Route 
             path="/" 
-            element={
-              <AppLayout userRole="user" userName="Visiteur">
-                <UserDashboard />
-              </AppLayout>
-            } 
+            element={<PresentationPage />} 
+          />
+
+          {/* Route du dashboard utilisateur */}
+          <Route 
+            path="/dashboard" 
+            element={<UserDashboard />} 
           />
 
           {/* Route de connexion */}
@@ -63,6 +80,24 @@ const App: React.FC = () => {
                 <LoginPage />
               )
             } 
+          />
+
+          {/* Route d'inscription */}
+          <Route 
+            path="/register" 
+            element={
+              isAuthenticated ? (
+                <Navigate to={userRole === 'pharmacy' ? '/pharmacy' : '/admin'} replace />
+              ) : (
+                <RegisterPage />
+              )
+            } 
+          />
+
+          {/* Route mot de passe oublié */}
+          <Route 
+            path="/forgot-password" 
+            element={<ForgotPasswordPage />} 
           />
 
           {/* Routes protégées pour les pharmacies */}
