@@ -1,67 +1,62 @@
-import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Calendar as CalendarIcon, History, User, AlertCircle, ClipboardList, LogOut } from "lucide-react";
 import PlanningViewer from '../components/pharmacy/PlanningViewer';
 import OnCallReportForm from '../components/pharmacy/OnCallReportForm';
 import OnCallHistory from '../components/pharmacy/OnCallHistory';
 import PharmacyProfileForm from '../components/pharmacy/PharmacyProfileForm';
 
-const TABS = [
-  { key: 'planning', label: 'Planning' },
-  { key: 'report', label: 'Signaler une garde' },
-  { key: 'guards', label: 'Mes gardes' },
-  { key: 'history', label: 'Historique' },
-  { key: 'account', label: 'Mon compte' },
+const NAV = [
+  { label: 'Planning', icon: CalendarIcon, path: '/pharmacy/planning' },
+  { label: 'Signaler une garde', icon: AlertCircle, path: '/pharmacy/report' },
+  { label: 'Mes gardes', icon: ClipboardList, path: '/pharmacy/guards' },
+  { label: 'Historique', icon: History, path: '/pharmacy/history' },
+  { label: 'Mon compte', icon: User, path: '/pharmacy/account' },
 ];
 
 export default function PharmacyDashboard() {
-  const [activeTab, setActiveTab] = useState('planning');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
-    <div className="flex min-h-[70vh]">
-      {/* Navigation latérale */}
-      <nav className="w-56 bg-white border-r p-6 space-y-2">
-        <h2 className="text-lg font-bold mb-4">Espace Pharmacie</h2>
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            className={`w-full text-left px-4 py-2 rounded transition font-medium ${activeTab === tab.key ? 'bg-primary-100 text-primary-700' : 'hover:bg-neutral-100 text-neutral-700'}`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
-      {/* Contenu principal */}
-      <main className="flex-1 p-8">
-        {activeTab === 'planning' && (
-          <section>
-            <h1 className="text-2xl font-bold mb-4">Planning des gardes</h1>
-            <PlanningViewer />
-          </section>
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar */}
+      <aside className="w-64 bg-card border-r flex flex-col py-6 px-4">
+        <div className="mb-8 text-2xl font-bold text-primary">GardePharma</div>
+        <nav className="flex flex-col gap-2">
+          {NAV.map(item => (
+            <Button
+              key={item.path}
+              variant={location.pathname === item.path ? "secondary" : "ghost"}
+              className="justify-start text-base"
+              onClick={() => navigate(item.path)}
+            >
+              <item.icon className="mr-2 w-5 h-5" /> {item.label}
+            </Button>
+          ))}
+        </nav>
+        <Button variant="outline" className="mt-auto" onClick={() => navigate('/login')}>
+          <LogOut className="mr-2" /> Déconnexion
+        </Button>
+      </aside>
+      {/* Main content */}
+      <main className="flex-1 p-10 space-y-8">
+        {location.pathname === '/pharmacy/planning' && <PlanningViewer />}
+        {location.pathname === '/pharmacy/report' && <OnCallReportForm />}
+        {location.pathname === '/pharmacy/guards' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Mes gardes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-muted-foreground">Liste de mes gardes (à implémenter)</div>
+            </CardContent>
+          </Card>
         )}
-        {activeTab === 'report' && (
-          <section>
-            <h1 className="text-2xl font-bold mb-4">Signaler une garde</h1>
-            <OnCallReportForm />
-          </section>
-        )}
-        {activeTab === 'guards' && (
-          <section>
-            <h1 className="text-2xl font-bold mb-4">Mes gardes</h1>
-            <div>Liste de mes gardes (à implémenter)</div>
-          </section>
-        )}
-        {activeTab === 'history' && (
-          <section>
-            <h1 className="text-2xl font-bold mb-4">Historique des gardes</h1>
-            <OnCallHistory />
-          </section>
-        )}
-        {activeTab === 'account' && (
-          <section>
-            <h1 className="text-2xl font-bold mb-4">Mon compte</h1>
-            <PharmacyProfileForm />
-          </section>
-        )}
+        {location.pathname === '/pharmacy/history' && <OnCallHistory />}
+        {location.pathname === '/pharmacy/account' && <PharmacyProfileForm />}
       </main>
     </div>
   );

@@ -5,6 +5,11 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UserDashboard from './pages/UserDashboard';
 import PresentationPage from './pages/PresentationPage';
+import PlanningViewer from './components/pharmacy/PlanningViewer';
+import OnCallReportForm from './components/pharmacy/OnCallReportForm';
+import OnCallHistory from './components/pharmacy/OnCallHistory';
+import PharmacyProfileForm from './components/pharmacy/PharmacyProfileForm';
+import PharmacyPage from './pages/PharmacyPage'; // Added import for PharmacyPage
 
 // Pages pour les pharmacies (à créer)
 const PharmacyDashboard = () => (
@@ -70,6 +75,12 @@ const App: React.FC = () => {
             element={<UserDashboard />} 
           />
 
+          {/* Route du dashboard pharmacie (nouvelle interface) */}
+          <Route 
+            path="/pharmacy" 
+            element={<PharmacyPage />} 
+          />
+
           {/* Route de connexion */}
           <Route 
             path="/login" 
@@ -100,23 +111,25 @@ const App: React.FC = () => {
             element={<ForgotPasswordPage />} 
           />
 
-          {/* Routes pour les pharmacies (sans protection) */}
-          <Route 
+          {/* Routes pour les pharmacies (sous-routes dédiées, cohérence AppLayout) */}
+          {/* <Route 
             path="/pharmacy/*" 
             element={
               <AppLayout userRole="pharmacy" userName="Pharmacie">
                 <Routes>
-                  <Route path="/" element={<PharmacyDashboard />} />
-                  <Route path="/planning" element={<div>Planning des gardes</div>} />
-                  <Route path="/guards" element={<div>Mes gardes</div>} />
-                  <Route path="/profile" element={<div>Profil pharmacie</div>} />
+                  <Route path="planning" element={<PlanningViewer />} />
+                  <Route path="report" element={<OnCallReportForm />} />
+                  <Route path="guards" element={<div>Liste de mes gardes (à implémenter)</div>} />
+                  <Route path="history" element={<OnCallHistory />} />
+                  <Route path="account" element={<PharmacyProfileForm />} />
+                  <Route path="*" element={<Navigate to="planning" replace />} />
                 </Routes>
               </AppLayout>
-            } 
-          />
+            }
+          /> */}
 
           {/* Routes pour les administrateurs (sans protection) */}
-          <Route 
+          {/* <Route 
             path="/admin/*" 
             element={
               <AppLayout userRole="admin" userName="Administrateur">
@@ -128,7 +141,7 @@ const App: React.FC = () => {
                 </Routes>
               </AppLayout>
             } 
-          />
+          /> */}
 
           {/* Route par défaut */}
           <Route path="*" element={<Navigate to="/" replace />} />
