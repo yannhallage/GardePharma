@@ -11,6 +11,10 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
+import DashboardPage from './pharmacy/DashboardPage';
+// import PlanningPage from './pharmacy/PlanningPage';
+import MesGardesPage from './pharmacy/MesGardesPage';
+import ProfilPage from './pharmacy/ProfilPage';
 
 const pharmacyName = 'Pharmacie du Soleil';
 
@@ -251,75 +255,6 @@ if (typeof window !== 'undefined') {
   }, 500);
 }
 
-const MesGardesPage = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Mes Gardes</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-left text-gray-600">
-            <th className="py-2">Date</th>
-            <th>Type</th>
-            <th>État</th>
-            <th>Observations</th>
-          </tr>
-        </thead>
-        <tbody>
-          {GARDE_EVENTS_FC.map((garde, i) => (
-            <tr key={i} className="border-b last:border-0">
-              <td className="py-2">{garde.start}</td>
-              <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
-              <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
-              <td>-</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </CardContent>
-  </Card>
-);
-
-const ProfilPage = () => (
-  <Card className="max-w-2xl">
-    <CardHeader>
-      <CardTitle>Modifier mon compte</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Label>Nom de la pharmacie</Label>
-          <Input type="text" defaultValue={pharmacyName} />
-        </div>
-        <div>
-          <Label>Téléphone</Label>
-          <Input type="tel" defaultValue="01 23 45 67 89" />
-        </div>
-        <div className="md:col-span-2">
-          <Label>Adresse</Label>
-          <Input type="text" defaultValue="123 Rue de la Santé, Paris" />
-        </div>
-        <div>
-          <Label>Email</Label>
-          <Input type="email" defaultValue="soleil@pharma.fr" />
-        </div>
-        <div>
-          <Label>Changer le mot de passe</Label>
-          <Input type="password" placeholder="Nouveau mot de passe" />
-        </div>
-        <div className="md:col-span-2">
-          <Label>Géolocalisation</Label>
-          <Input type="text" placeholder="Latitude, Longitude" />
-        </div>
-        <div className="md:col-span-2 flex justify-end">
-          <Button type="submit">Enregistrer les modifications</Button>
-        </div>
-      </form>
-    </CardContent>
-  </Card>
-);
-
 const ReportModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const [date, setDate] = useState('');
   const [type, setType] = useState('Jour');
@@ -424,10 +359,10 @@ const PharmacyPage: React.FC = () => {
   const [reportOpen, setReportOpen] = useState(false);
 
   let content = null;
-  if (tab === 'Accueil') content = <AccueilPage />;
+  if (tab === 'Accueil') content = <DashboardPage />;
   else if (tab === 'Planning') content = <PlanningPage onAdd={() => setReportOpen(true)} />;
   else if (tab === 'Mes Gardes') content = <MesGardesPage />;
-  else if (tab === 'Modifier mon compte') content = <ProfilPage />;
+  else if (tab === 'Profil') content = <ProfilPage />;
 
   return (
     <>
