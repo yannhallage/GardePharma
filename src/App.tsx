@@ -10,24 +10,16 @@ import OnCallReportForm from './components/pharmacy/OnCallReportForm';
 import OnCallHistory from './components/pharmacy/OnCallHistory';
 import PharmacyProfileForm from './components/pharmacy/PharmacyProfileForm';
 import PharmacyPage from './pages/PharmacyPage'; // Added import for PharmacyPage
+import AdminDashboard from './pages/AdminDashboard';
 
 // Pages pour les pharmacies (à créer)
-const PharmacyDashboard = () => (
-  <div className="space-y-6">
-    <h1 className="text-3xl font-bold text-neutral-800">Espace Pharmacie</h1>
-    <p className="text-neutral-600">Gérez votre planning de garde</p>
-    {/* Contenu à développer */}
-  </div>
-);
-
-// Pages pour les administrateurs (à créer)
-const AdminDashboard = () => (
-  <div className="space-y-6">
-    <h1 className="text-3xl font-bold text-neutral-800">Espace Administration</h1>
-    <p className="text-neutral-600">Gérez les pharmacies et les plannings</p>
-    {/* Contenu à développer */}
-  </div>
-);
+// const PharmacyDashboard = () => (
+//   <div className="space-y-6">
+//     <h1 className="text-3xl font-bold text-neutral-800">Espace Pharmacie</h1>
+//     <p className="text-neutral-600">Gérez votre planning de garde</p>
+//     {/* Contenu à développer */}
+//   </div>
+// );
 
 // Page mot de passe oublié (à créer)
 const ForgotPasswordPage = () => (
@@ -129,19 +121,16 @@ const App: React.FC = () => {
           /> */}
 
           {/* Routes pour les administrateurs (sans protection) */}
-          {/* <Route 
-            path="/admin/*" 
+          <Route 
+            path="/administrateur" 
             element={
-              <AppLayout userRole="admin" userName="Administrateur">
-                <Routes>
-                  <Route path="/" element={<AdminDashboard />} />
-                  <Route path="/calendar" element={<div>Calendrier complet</div>} />
-                  <Route path="/management" element={<div>Gestion des pharmacies</div>} />
-                  <Route path="/settings" element={<div>Paramètres</div>} />
-                </Routes>
-              </AppLayout>
+                <AdminDashboard />
+              // isAuthenticated && userRole === 'admin' ? (
+              // ) : (
+              //   <Navigate to="/login" replace />
+              // )
             } 
-          /> */}
+          />
 
           {/* Route par défaut */}
           <Route path="*" element={<Navigate to="/" replace />} />
