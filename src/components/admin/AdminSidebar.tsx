@@ -8,10 +8,10 @@ interface AdminSidebarProps {
 const links = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'calendar', label: 'Calendrier' },
-//   { key: 'export', label: 'Export' },
+  // { key: 'export', label: 'Export' },
   { key: 'pharmacies', label: 'Pharmacies' },
   { key: 'roles', label: 'Rôles' },
-//   { key: 'rights', label: 'Droits' },
+  { key: 'rights', label: 'Droits' },
   { key: 'manual', label: 'Attribution' },
   { key: 'profile', label: 'Profil' },
 ];

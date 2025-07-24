@@ -72,7 +72,7 @@ export default function ManualOnCallAssignment() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Type de garde</label>
-            <select
+            <select 
               value={type}
               onChange={e => setType(e.target.value)}
               className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"

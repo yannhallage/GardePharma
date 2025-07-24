@@ -11,6 +11,7 @@ import OnCallHistory from './components/pharmacy/OnCallHistory';
 import PharmacyProfileForm from './components/pharmacy/PharmacyProfileForm';
 import PharmacyPage from './pages/PharmacyPage'; // Added import for PharmacyPage
 import AdminDashboard from './pages/AdminDashboard';
+import { Toaster } from 'react-hot-toast';
 
 // Pages pour les pharmacies (à créer)
 // const PharmacyDashboard = () => (
@@ -135,6 +136,7 @@ const App: React.FC = () => {
           {/* Route par défaut */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Toaster position="bottom-center" />
       </div>
     </Router>
   );
