@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         
         .search-input:focus {
           outline: none;
-          border-color: #3b82f6;
+          border-color: #27ae60;
           box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
           background: white;
         }
@@ -94,12 +94,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
         
         .pharmacy-item:hover {
-          border-color: #3b82f6;
+          border-color: #27ae60;
           box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
         }
         
         .pharmacy-item.selected {
-          border-color: #3b82f6;
+          border-color: #27ae60;
           box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
         
@@ -145,7 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
         
         .view-toggle button.active {
-          background: #3b82f6;
+          background: #27ae60;
           color: white;
         }
         
@@ -228,7 +228,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               className={viewMode === 'map' ? 'active' : ''}
             >
               <MapPin className="h-3 w-3 mr-1 inline" />
-              Carte
+              Map
             </button>
             <button
               onClick={() => setViewMode('cards')}
