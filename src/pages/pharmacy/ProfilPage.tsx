@@ -11,7 +11,7 @@ const ProfilPage = () => (
       <div className="mb-8">
         <h3 className="text-lg font-semibold mb-4">My Profile</h3>
         <div className="flex items-center gap-6 mb-4">
-          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar" className="w-16 h-16 rounded-full object-cover border" />
+          <img src="https://media.designrush.com/inspiration_images/549120/conversions/Pharma_ee5626592827-desktop.jpg" alt="avatar" className="w-16 h-16 rounded-full object-cover border" />
           <div className="flex gap-2">
             <Button type="button" className="bg-neutral-100 text-neutral-700 hover:bg-neutral-200 px-3 py-1 text-sm">+ Change Image</Button>
             <Button type="button" className="bg-neutral-100 text-neutral-700 hover:bg-neutral-200 px-3 py-1 text-sm">Remove Image</Button>
