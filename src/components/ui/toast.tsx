@@ -18,7 +18,7 @@ export function Toaster() {
     <div
       style={{
         position: "fixed",
-        top: 16,
+        bottom: 16, // Affichage en bas à droite
         right: 16,
         zIndex: 9999,
         display: "flex",
@@ -38,7 +38,6 @@ export function Toaster() {
             boxShadow: "none",
             padding: 0,
             border: "none",
-            color: "#222",
             minWidth: 0,
             maxWidth: 360,
             display: toast.open === false ? "none" : "block",
