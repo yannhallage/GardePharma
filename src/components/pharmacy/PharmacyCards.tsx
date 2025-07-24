@@ -50,7 +50,7 @@ const PharmacyCards: React.FC<PharmacyCardsProps> = ({ pharmacies, onCall, onNav
         }
         
         .pharmacy-card:hover {
-          border-color: #3b82f6;
+          border-color: #27ae60;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
@@ -95,7 +95,7 @@ const PharmacyCards: React.FC<PharmacyCardsProps> = ({ pharmacies, onCall, onNav
             {pharmacy.isOnDuty ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Badge variant="success" className="text-xs px-2 py-0.5">En garde</Badge>
+                  <Badge variant="default" className="text-xs px-2 py-0.5">En garde</Badge>
                   <div className="flex items-center text-xs text-neutral-500">
                     <Clock className="h-2.5 w-2.5 mr-1" />
                     {pharmacy.dutyHours}
@@ -110,7 +110,7 @@ const PharmacyCards: React.FC<PharmacyCardsProps> = ({ pharmacies, onCall, onNav
                 <div className="flex space-x-2 pt-2">
                   <Button
                     onClick={() => onCall(pharmacy)}
-                    className="flex-1 text-xs h-7"
+                    className="flex-1 text-xs h-7 bg-green-600 text-white hover:bg-green-700"
                   >
                     <Phone className="h-3 w-3 mr-1" />
                     Appeler

@@ -3,7 +3,7 @@ import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import MapComponent from '../components/map/MapComponent';
 import PharmacyCards from '../components/pharmacy/PharmacyCards';
-import { Toaster } from '../components/ui/toaster';
+import { Toaster } from '../components/ui/toast';
 import { useToast } from '../hooks/use-toast';
 
 // Données de test pour les pharmacies
@@ -20,7 +20,7 @@ const mockPharmacies = [
     distance: '0.5 km',
     capacity: 100,
     logo: '🏥',
-    services: ['Médicaments', 'Conseils', 'Vaccination']
+    services: ['Médicaments', 'Conseils', 'Vaccination']  
   },
   {
     id: '2',

@@ -12,7 +12,7 @@ const PresentationPage: React.FC = () => {
     navigate('/login');
   };
   const handleGetStarted = () => {
-    navigate('/dashboard');
+    navigate('/localisation');
   };
 
   // Animations variants

@@ -16,9 +16,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ userRole = 'user', userName = 'Ut
       { icon: Phone, label: 'Pharmacies', href: '/pharmacies' },
     ],
     pharmacy: [
-      { icon: Calendar, label: 'Planning', href: '/planning' },
-      { icon: Phone, label: 'Mes Gardes', href: '/guards' },
-      { icon: Settings, label: 'Profil', href: '/profile' },
+      { icon: Calendar, label: 'Planning', href: '/pharmacy/planning' },
+      { icon: Phone, label: 'Mes Gardes', href: '/pharmacy/guards' },
+      { icon: Settings, label: 'Profil', href: '/pharmacy/profile' },
     ],
     admin: [
       { icon: Calendar, label: 'Calendrier', href: '/calendar' },
