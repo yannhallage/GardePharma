@@ -12,7 +12,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
 import DashboardPage from './pharmacy/DashboardPage';
-// import PlanningPage from './pharmacy/PlanningPage';
+import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
 import ProfilPage from './pharmacy/ProfilPage';
 
@@ -113,7 +113,7 @@ const AccueilPage = () => (
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle><MapPin className="mr-2 text-primary-600 inline"/> Pharmacies en garde aujourd'hui</CardTitle>
+          <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="text-sm text-gray-700 space-y-2">
@@ -130,17 +130,17 @@ const CustomToolbar = ({ label, onNavigate }) => (
   <div className="flex items-center justify-between px-4 py-2 bg-white border-b rounded-t-lg">
     <div className="flex items-center gap-2">
       <button onClick={() => onNavigate('PREV')} className="p-2 rounded hover:bg-neutral-100">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
       <button onClick={() => onNavigate('TODAY')} className="px-3 py-1 rounded text-sm font-medium bg-neutral-100 hover:bg-neutral-200">Aujourd'hui</button>
       <button onClick={() => onNavigate('NEXT')} className="p-2 rounded hover:bg-neutral-100">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
       <span className="ml-4 text-lg font-semibold text-neutral-700">{label}</span>
     </div>
     <div className="flex items-center gap-2">
       <button className="px-3 py-1 rounded bg-neutral-100 text-sm font-medium hover:bg-neutral-200">Exporter CSV</button>
-      <Button className="ml-2 bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded flex items-center gap-2"><PlusCircle className="h-4 w-4"/>Ajouter une garde</Button>
+      <Button className="ml-2 bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded flex items-center gap-2"><PlusCircle className="h-4 w-4" />Ajouter une garde</Button>
     </div>
   </div>
 );
@@ -158,104 +158,9 @@ const CustomMonthDateCell = ({ children, value, currentMonth }) => (
   <div className={`h-24 min-h-[96px] p-1 border border-neutral-200 rounded-lg bg-white relative ${value.getMonth() !== currentMonth ? 'bg-neutral-50 text-neutral-300' : ''}`}>{children}</div>
 );
 
-const PlanningPage = ({ onAdd }) => {
-  const [typeFilter, setTypeFilter] = useState('Tous');
-  const filteredEvents = typeFilter === 'Tous'
-    ? GARDE_EVENTS_FC
-    : GARDE_EVENTS_FC.filter(e => {
-        if (typeFilter === 'Jour') return !e.title.includes('Nuit') && !e.title.includes('Férié') && !e.title.includes('Week-end');
-        if (typeFilter === 'Nuit') return e.title.includes('Nuit');
-        if (typeFilter === 'Férié') return e.title.includes('Férié');
-        if (typeFilter === 'Week-end') return e.title.includes('Week-end');
-        return true;
-      });
-  return (
-    <Card className="shadow-lg border-0">
-      <CardHeader className="p-0">
-        <div className="flex items-center justify-between px-4 py-2 bg-white border-b rounded-t-lg">
-          <div className="flex items-center gap-2">
-            <button id="fc-prev" className="p-2 rounded hover:bg-neutral-100">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-            <button id="fc-today" className="px-3 py-1 rounded text-sm font-medium bg-neutral-100 hover:bg-neutral-200">Aujourd'hui</button>
-            <button id="fc-next" className="p-2 rounded hover:bg-neutral-100">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-            <span id="fc-title" className="ml-4 text-lg font-semibold text-neutral-700"></span>
-            <div className="ml-6 flex items-center gap-2">
-              <Label className="text-xs text-neutral-500">Filtrer par type</Label>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectContent>
-                  <SelectItem value="Tous">Tous</SelectItem>
-                  <SelectItem value="Jour">Jour</SelectItem>
-                  <SelectItem value="Nuit">Nuit</SelectItem>
-                  <SelectItem value="Week-end">Week-end</SelectItem>
-                  <SelectItem value="Férié">Férié</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-1 rounded bg-neutral-100 text-sm font-medium hover:bg-neutral-200">Exporter CSV</button>
-            <Button className="ml-2 bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded flex items-center gap-2"><PlusCircle className="h-4 w-4"/>Ajouter une garde</Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="p-4">
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            locale={frLocale}
-            headerToolbar={false}
-            events={filteredEvents}
-            height={600}
-            dayMaxEventRows={3}
-            fixedWeekCount={false}
-            dayCellClassNames={({ date, isOther }) => [
-              'border',
-              'border-neutral-200',
-              'rounded-lg',
-              'bg-white',
-              isOther ? 'bg-neutral-50 text-neutral-300' : '',
-              'min-h-[96px]',
-              'relative',
-            ].join(' ')}
-            eventContent={renderEventContent}
-            datesSet={handleDatesSet}
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+// Supprimer la définition locale de PlanningPage (ligne 161 à ~ligne 210)
 
-function renderEventContent(arg) {
-  return (
-    <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mb-1" style={{ background: arg.event.backgroundColor, color: arg.event.textColor }}>
-      <span>{arg.event.title}</span>
-    </div>
-  );
-}
-
-function handleDatesSet(arg) {
-  // Met à jour le titre du mois dans la toolbar custom
-  const title = arg.view.title;
-  const titleEl = document.getElementById('fc-title');
-  if (titleEl) titleEl.textContent = title;
-}
-
-// Navigation custom
-if (typeof window !== 'undefined') {
-  setTimeout(() => {
-    const calendarApi = document.querySelector('.fc')?.__fullCalendar;
-    document.getElementById('fc-prev')?.addEventListener('click', () => calendarApi?.prev());
-    document.getElementById('fc-next')?.addEventListener('click', () => calendarApi?.next());
-    document.getElementById('fc-today')?.addEventListener('click', () => calendarApi?.today());
-  }, 500);
-}
-
-const ReportModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+export const ReportModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const [date, setDate] = useState('');
   const [type, setType] = useState('Jour');
   const [comment, setComment] = useState('');
@@ -291,7 +196,9 @@ const ReportModal = ({ open, onClose }: { open: boolean; onClose: () => void }) 
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Soumettre ma demande</Button>
+            <Button type="submit"
+              className='"ml-2 bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded flex items-center gap-2"'
+            >Soumettre ma demande</Button>
           </DialogFooter>
         </form>
         <div className="mt-6 text-yellow-700 bg-yellow-50 border border-yellow-100 rounded px-4 py-2 text-sm">En attente de validation de l’administrateur</div>
