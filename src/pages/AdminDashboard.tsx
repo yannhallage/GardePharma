@@ -7,6 +7,7 @@ import PharmacyAccountsManager from '../components/admin/PharmacyAccountsManager
 import RoleManager from '../components/admin/RoleManager';
 import AccessRightsManager from '../components/admin/AccessRightsManager';
 import ManualOnCallAssignment from '../components/admin/ManualOnCallAssignment';
+import GuardsSection from '../components/admin/GuardsSection';
 import { motion } from 'framer-motion';
 
 const adminName = 'Administrateur';
@@ -14,6 +15,7 @@ const navItems = [
   { icon: Home, label: 'Dashboard', key: 'Dashboard' },
   { icon: CalendarIcon, label: 'Calendrier', key: 'Calendrier' },
   { icon: Users, label: 'Pharmacies', key: 'Pharmacies' },
+  { icon: ClipboardList, label: 'Gardes', key: 'Gardes' },
   { icon: UserCog, label: 'Rôles', key: 'Rôles' },
   { icon: CalendarIcon, label: 'Attribution', key: 'Attribution' },
   { icon: Settings, label: 'Profil', key: 'Profil' },
@@ -100,6 +102,11 @@ export default function AdminDashboard() {
   else if (tab === 'Pharmacies') content = (
     <motion.div {...sectionMotion}>
       <PharmacyAccountsManager />
+    </motion.div>
+  );
+  else if (tab === 'Gardes') content = (
+    <motion.div {...sectionMotion}>
+      <GuardsSection />
     </motion.div>
   );
   else if (tab === 'Rôles') content = (

@@ -5,23 +5,41 @@ import interactionPlugin from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
 import { Card, CardHeader, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 
-const GARDE_EVENTS = [
-  { title: '🌙 Garde de nuit', start: '2025-07-05', backgroundColor: '#dcfce7', borderColor: '#dcfce7', textColor: '#166534' },
-  { title: '🎉 Garde férié', start: '2025-07-13', backgroundColor: '#fee2e2', borderColor: '#fee2e2', textColor: '#991b1b' },
-  { title: '🌙 Garde de nuit', start: '2025-07-20', backgroundColor: '#fef9c3', borderColor: '#fef9c3', textColor: '#a16207' },
+const GARDE_EVENTS_INIT = [
+  { id: '1', title: '🌙 Garde de nuit', start: '2025-07-05', backgroundColor: '#dcfce7', borderColor: '#dcfce7', textColor: '#166534', pharmacy: 'Pharmacie du Centre' },
+  { id: '2', title: '🎉 Garde férié', start: '2025-07-13', backgroundColor: '#fee2e2', borderColor: '#fee2e2', textColor: '#991b1b', pharmacy: 'Pharmacie Saint-Michel' },
+  { id: '3', title: '🌙 Garde de nuit', start: '2025-07-20', backgroundColor: '#fef9c3', borderColor: '#fef9c3', textColor: '#a16207', pharmacy: 'Pharmacie du Centre' },
 ];
 
 export default function FullCalendarView() {
+  const [events, setEvents] = React.useState(GARDE_EVENTS_INIT);
+
   function renderEventContent(arg: any) {
     return (
-      <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mb-1" style={{ background: arg.event.backgroundColor, color: arg.event.textColor }}>
-        <span>{arg.event.title}</span>
+      <div className="flex flex-col gap-0 px-2 py-1 rounded-full text-xs font-medium mb-1" style={{ background: arg.event.backgroundColor, color: arg.event.textColor }}>
+        <div className="flex items-center gap-1">
+          <span>{arg.event.title}</span>
+          <button
+            className="ml-2 p-1 rounded hover:bg-red-100"
+            title="Supprimer"
+            onClick={e => {
+              e.stopPropagation();
+              setEvents((prev: any[]) => prev.filter(ev => ev.id !== arg.event.id));
+              toast.success('Garde supprimée avec succès.');
+            }}
+          >
+            <Trash2 className="h-3 w-3 text-red-500" />
+          </button>
+        </div>
+        <span className="text-[10px] text-gray-500 lowercase font-normal mt-0.5">{arg.event.extendedProps.pharmacy?.toLowerCase() || ''}</span>
       </div>
     );
   }
+
   function handleDatesSet(arg: any) {
     const title = arg.view.title;
     const titleEl = document.getElementById('fc-title-admin');
@@ -68,7 +86,7 @@ export default function FullCalendarView() {
                 initialView="dayGridMonth"
                 locale={frLocale}
                 headerToolbar={false}
-                events={GARDE_EVENTS}
+                events={events}
                 height={600}
                 dayMaxEventRows={3}
                 fixedWeekCount={false}
