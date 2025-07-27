@@ -15,11 +15,6 @@ export default function ManualOnCallAssignment() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [comment, setComment] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    setFile(e.target.files?.[0] || null);
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,9 +23,9 @@ export default function ManualOnCallAssignment() {
 
   return (
     <motion.div className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      // initial={{ opacity: 0, y: 30 }}
+      // animate={{ opacity: 1, y: 0 }}
+      // transition={{ duration: 0.5 }}
     >
       <form
         className="bg-white rounded-xl shadow-lg p-10 border w-full max-w-2xl"
@@ -63,11 +58,10 @@ export default function ManualOnCallAssignment() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
-            <input
-              type="date"
+            <DatePicker
               value={date}
-              onChange={e => setDate(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              onChange={setDate}
+              placeholder="Choisir une date"
             />
           </div>
           <div>
@@ -110,15 +104,6 @@ export default function ManualOnCallAssignment() {
               placeholder="Ajouter un commentaire..."
               rows={2}
             />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">Pièce jointe (facultatif)</label>
-            <input
-              type="file"
-              onChange={handleFile}
-              className="w-full"
-            />
-            {file && <span className="mt-2 text-green-700 font-medium block">{file.name}</span>}
           </div>
         </div>
         <div className="flex justify-end">

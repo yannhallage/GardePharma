@@ -97,9 +97,9 @@ export default function RoleManager() {
 
   return (
     <motion.div className="p-4 md:p-6"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}  
+      // initial={{ opacity: 0, y: 30 }}
+      // animate={{ opacity: 1, y: 0 }}
+      // transition={{ duration: 0.5 }}  
     >
       <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200 max-w-5xl mx-auto">
         {/* Barre de recherche et filtres */}

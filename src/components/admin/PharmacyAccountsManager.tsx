@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UploadCloud } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const COMMUNES_CI = [
   'Abobo', 'Adjamé', 'Anyama', 'Attécoubé', 'Bingerville', 'Cocody', 'Koumassi', 'Marcory', 'Plateau', 'Port-Bouët', 'Treichville', 'Yopougon',
@@ -43,13 +44,13 @@ export default function PharmacyAccountsManager() {
     const errs = validate();
     setErrors(errs);
     if (Object.keys(errs).length > 0) {
-      showToast('Veuillez corriger les erreurs du formulaire', 'error');
+      toast.error('Veuillez corriger les erreurs du formulaire');
       return;
     }
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      showToast('Pharmacie ajoutée avec succès !', 'success');
+      toast.success('Pharmacie ajoutée avec succès !');
       setForm({ nom_pharmacie: '', email: '', lieu: '', chef_pharmacie: '', commune: '', numero: '' });
       setErrors({});
     }, 1000);

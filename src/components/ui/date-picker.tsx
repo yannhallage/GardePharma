@@ -1,39 +1,34 @@
-import * as React from 'react';
-import { Popover } from './popover';
-import { Button } from './button';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { DayPicker } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
+"use client";
+import * as React from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-export function DatePicker({ value, onChange, placeholder = 'Choisir une date', disabled }: {
+export function DatePicker({ value, onChange, placeholder = "Choisir une date", disabled }: {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   placeholder?: string;
   disabled?: boolean;
 }) {
-  const [open, setOpen] = React.useState(false);
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <Button
-        variant="outline"
-        className={`w-full justify-start text-left font-normal ${!value ? 'text-gray-400' : ''}`}
-        onClick={() => setOpen(!open)}
-        disabled={disabled}
-        type="button"
-      >
-        <CalendarIcon className="mr-2 h-4 w-4" />
-        {value ? format(value, 'dd/MM/yyyy') : placeholder}
-      </Button>
-      <div className="z-50">
-        <DayPicker
-          mode="single"
-          selected={value}
-          onSelect={onChange}
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          data-empty={!value}
+          className="data-[empty=true]:text-muted-foreground w-full justify-start text-left font-normal"
           disabled={disabled}
-          className="bg-white rounded-lg shadow p-2 mt-2"
-        />
-      </div>
+          type="button"
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {value ? format(value, "dd/MM/yyyy") : <span>{placeholder}</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar mode="single" selected={value} onSelect={onChange} disabled={disabled} />
+      </PopoverContent>
     </Popover>
   );
 } 
