@@ -65,7 +65,7 @@ export default function FullCalendarView() {
             <button id="fc-next-admin" className="p-2 rounded hover:bg-neutral-100">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
-            <span id="fc-title-admin" className="ml-4 text-lg font-semibold text-neutral-700"></span>
+            <span id="fc-title-admin" className="ml-4 text-base font-semibold text-neutral-700"></span>
           </div>
           <div className="flex items-center gap-2">
             <Button className="ml-2 bg-green-600 text-white hover:bg-green-700 h-8 px-3 py-1 text-sm rounded flex items-center gap-2"><PlusCircle className="h-4 w-4" />Ajouter une garde</Button>

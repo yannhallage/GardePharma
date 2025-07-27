@@ -21,7 +21,7 @@ export default function AdminSidebar({ active, onSelect }: AdminSidebarProps) {
     <aside className="w-64 bg-white border-r flex flex-col min-h-screen">
       <div className="flex items-center gap-3 px-6 py-6 border-b">
         <img src="https://media.designrush.com/inspiration_images/549120/conversions/Pharma_ee5626592827-desktop.jpg" alt="GardePharma" className="w-10 h-10 rounded-lg object-cover" />
-        <span className="text-2xl font-bold text-green-700">GardePharma</span>
+        <span className="text-xl font-bold text-green-700">GardePharma</span>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2">
         {links.map(link => (
