@@ -5,10 +5,10 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UserDashboard from './pages/UserDashboard';
 import PresentationPage from './pages/PresentationPage';
-import PlanningViewer from './components/pharmacy/PlanningViewer';
-import OnCallReportForm from './components/pharmacy/OnCallReportForm';
-import OnCallHistory from './components/pharmacy/OnCallHistory';
-import PharmacyProfileForm from './components/pharmacy/PharmacyProfileForm';
+// import PlanningViewer from './components/pharmacy/PlanningViewer';
+// import OnCallReportForm from './components/pharmacy/OnCallReportForm';
+// import OnCallHistory from './components/pharmacy/OnCallHistory';
+// import PharmacyProfileForm from './components/pharmacy/PharmacyProfileForm';
 import PharmacyPage from './pages/PharmacyPage'; // Added import for PharmacyPage
 import AdminDashboard from './pages/AdminDashboard';
 import { Toaster } from 'react-hot-toast';
