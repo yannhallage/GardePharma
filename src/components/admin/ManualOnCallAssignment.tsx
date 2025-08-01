@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { DatePicker } from '../ui/date-picker';
+import { useManualOnCallAssignment } from '../../hooks/use-manual-oncall';
 
 const pharmacies = [
   { id: 1, name: 'Pharmacie du Centre' },
@@ -8,18 +9,14 @@ const pharmacies = [
 ];
 
 export default function ManualOnCallAssignment() {
-  const [selectedPharmacy, setSelectedPharmacy] = useState('');
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [type, setType] = useState('Jour');
-  const [holder, setHolder] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [comment, setComment] = useState('');
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    // ... logique d'attribution
-  }
+  const {
+    formData,
+    loading,
+    errors,
+    handleInputChange,
+    handleDateChange,
+    handleSubmit,
+  } = useManualOnCallAssignment();
 
   return (
     <motion.div className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10"
@@ -36,82 +33,96 @@ export default function ManualOnCallAssignment() {
           <div>
             <label className="block text-sm font-medium mb-1">Pharmacie</label>
             <select
-              value={selectedPharmacy}
-              onChange={e => setSelectedPharmacy(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              name="pharmacy_id"
+              value={formData.pharmacy_id}
+              onChange={e => handleInputChange('pharmacy_id', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.pharmacy_id ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             >
               <option value="">Sélectionner une pharmacie</option>
               {pharmacies.map(pharma => (
                 <option key={pharma.id} value={pharma.id}>{pharma.name}</option>
               ))}
             </select>
+            {errors.pharmacy_id && <div className="text-red-500 text-xs mt-1">{errors.pharmacy_id}</div>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Nom du titulaire</label>
             <input
               type="text"
-              value={holder}
-              onChange={e => setHolder(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              name="holder_name"
+              value={formData.holder_name}
+              onChange={e => handleInputChange('holder_name', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.holder_name ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Nom du titulaire"
             />
+            {errors.holder_name && <div className="text-red-500 text-xs mt-1">{errors.holder_name}</div>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
             <DatePicker
-              value={date}
-              onChange={setDate}
+              value={formData.date ? new Date(formData.date) : undefined}
+              onChange={handleDateChange}
               placeholder="Choisir une date"
             />
+            {errors.date && <div className="text-red-500 text-xs mt-1">{errors.date}</div>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Type de garde</label>
             <select 
-              value={type}
-              onChange={e => setType(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              name="type"
+              value={formData.type}
+              onChange={e => handleInputChange('type', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.type ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             >
               <option value="Jour">Jour</option>
               <option value="Nuit">Nuit</option>
               <option value="Week-end">Week-end</option>
               <option value="Férié">Férié</option>
             </select>
+            {errors.type && <div className="text-red-500 text-xs mt-1">{errors.type}</div>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Heure de début</label>
             <input
               type="time"
-              value={startTime}
-              onChange={e => setStartTime(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              name="start_time"
+              value={formData.start_time}
+              onChange={e => handleInputChange('start_time', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.start_time ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             />
+            {errors.start_time && <div className="text-red-500 text-xs mt-1">{errors.start_time}</div>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Heure de fin</label>
             <input
               type="time"
-              value={endTime}
-              onChange={e => setEndTime(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              name="end_time"
+              value={formData.end_time}
+              onChange={e => handleInputChange('end_time', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.end_time ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             />
+            {errors.end_time && <div className="text-red-500 text-xs mt-1">{errors.end_time}</div>}
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Commentaire (optionnel)</label>
             <textarea
-              value={comment}
-              onChange={e => setComment(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              name="comment"
+              value={formData.comment || ''}
+              onChange={e => handleInputChange('comment', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.comment ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Ajouter un commentaire..."
               rows={2}
             />
+            {errors.comment && <div className="text-red-500 text-xs mt-1">{errors.comment}</div>}
           </div>
         </div>
         <div className="flex justify-end">
           <button
             type="submit"
             className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg font-semibold shadow transition text-sm"
+            disabled={loading}
           >
-            Attribuer la garde
+            {loading ? 'Attribution...' : 'Attribuer la garde'}
           </button>
         </div>
       </form>

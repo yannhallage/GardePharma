@@ -5,11 +5,12 @@ import FullCalendarView from '../components/admin/FullCalendarView';
 import ExportPlanningButton from '../components/admin/ExportPlanningButton';
 import PharmacyAccountsManager from '../components/admin/PharmacyAccountsManager';
 import RoleManager from '../components/admin/RoleManager';
-import AccessRightsManager from '../components/admin/AccessRightsManager';
+// import AccessRightsManager from '../components/admin/AccessRightsManager';
 import ManualOnCallAssignment from '../components/admin/ManualOnCallAssignment';
 import GuardsSection from '../components/admin/GuardsSection';
 import { motion } from 'framer-motion';
 import AdminHistory from '../components/admin/AdminHistory';
+import ProfileForm from '../components/admin/ProfileForm';
 
 const adminName = 'Administrateur';
 const navItems = [
@@ -128,7 +129,7 @@ export default function AdminDashboard() {
   );
   else if (tab === 'Profil') content = (
     <motion.div {...sectionMotion}>
-      <ProfileForm />
+      <ProfileFormSection />
     </motion.div>
   );
 
@@ -153,40 +154,15 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function ProfileForm() {
+function ProfileFormSection() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10">
-      <form className="bg-white rounded-xl shadow-lg p-10 border w-full max-w-2xl">
-        <h2 className="text-base font-semibold mb-8">Mon profil</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label className="block text-xs font-medium mb-1">Nom</label>
-            <input type="text" placeholder="Nom" className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm" defaultValue="Dupont" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">Prénom</label>
-            <input type="text" placeholder="Prénom" className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm" defaultValue="Jean" />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-medium mb-1">Email</label>
-            <input type="email" placeholder="Email" className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm" defaultValue="admin@gardepharma.com" />
-          </div>
-        </div>
-        <div className="flex items-center gap-4 mb-6">
-          <img src={logoUrl} alt="Avatar" className="w-16 h-16 rounded-full border-2 border-green-200" />
-          <div>
-            <div className="font-semibold text-green-700 text-sm">Administrateur</div>
-            <div className="text-xs text-gray-500">admin@gardepharma.com</div>
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white rounded px-8 py-3 font-semibold shadow transition text-sm">Enregistrer</Button>
-        </div>
-      </form>
-    </motion.div>
+    <ProfileForm 
+      initialData={{
+        nom: "Dupont",
+        prenom: "Jean", 
+        email: "admin@gardepharma.com",
+        avatar_url: logoUrl
+      }}
+    />
   );
 } 
