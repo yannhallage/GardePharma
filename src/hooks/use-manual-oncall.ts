@@ -164,6 +164,17 @@ export function useManualOnCallAssignment() {
       return { success: false, error: timeRangeError };
     }
     
+    // Log des données de garde prêtes pour le serveur
+    console.log('🏥 Données de garde prêtes pour le serveur:', {
+      pharmacy_id: formData.pharmacy_id,
+      holder_name: formData.holder_name,
+      date: formData.date,
+      type: formData.type,
+      start_time: formData.start_time,
+      end_time: formData.end_time,
+      comment: formData.comment || 'Aucun commentaire'
+    });
+    
     const result = await submit(formData);
     return result;
   };

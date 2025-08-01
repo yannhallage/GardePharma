@@ -110,6 +110,17 @@ export function usePharmacyAccounts() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Log des données de pharmacie prêtes pour le serveur
+    console.log('💊 Données de pharmacie prêtes pour le serveur:', {
+      nom_pharmacie: formData.nom_pharmacie,
+      email: formData.email,
+      lieu: formData.lieu,
+      chef_pharmacie: formData.chef_pharmacie,
+      commune: formData.commune,
+      numero: formData.numero
+    });
+    
     const result = await submit(formData);
     return result;
   };
