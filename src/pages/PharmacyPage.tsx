@@ -15,6 +15,7 @@ import DashboardPage from './pharmacy/DashboardPage';
 import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
 import ProfilPage from './pharmacy/ProfilPage';
+import History from '../components/pharmacy/History';
 
 const pharmacyName = 'Pharmacie du Soleil';
 
@@ -22,6 +23,7 @@ const navItems = [
   { icon: Home, label: 'Accueil', key: 'Accueil' },
   { icon: CalendarIcon, label: 'Planning', key: 'Planning' },
   { icon: ClipboardList, label: 'Mes Gardes', key: 'Mes Gardes' },
+  { icon: ClipboardList, label: 'Historique', key: 'Historique' },
   { icon: Settings, label: 'Modifier mon compte', key: 'Profil' },
 ];
 
@@ -269,6 +271,7 @@ const PharmacyPage: React.FC = () => {
   if (tab === 'Accueil') content = <DashboardPage />;
   else if (tab === 'Planning') content = <PlanningPage onAdd={() => setReportOpen(true)} />;
   else if (tab === 'Mes Gardes') content = <MesGardesPage />;
+  else if (tab === 'Historique') content = <History />;
   else if (tab === 'Profil') content = <ProfilPage />;
 
   return (

@@ -15,11 +15,6 @@ export default function ManualOnCallAssignment() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [comment, setComment] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    setFile(e.target.files?.[0] || null);
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,22 +23,22 @@ export default function ManualOnCallAssignment() {
 
   return (
     <motion.div className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      // initial={{ opacity: 0, y: 30 }}
+      // animate={{ opacity: 1, y: 0 }}
+      // transition={{ duration: 0.5 }}
     >
       <form
         className="bg-white rounded-xl shadow-lg p-10 border w-full max-w-2xl"
         onSubmit={handleSubmit}
       >
-        <h2 className="text-xl font-semibold mb-8">Attribuer une garde manuellement</h2>
+        <h2 className="text-base font-semibold mb-8">Attribuer une garde manuellement</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
             <label className="block text-sm font-medium mb-1">Pharmacie</label>
             <select
               value={selectedPharmacy}
               onChange={e => setSelectedPharmacy(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
             >
               <option value="">Sélectionner une pharmacie</option>
               {pharmacies.map(pharma => (
@@ -57,17 +52,16 @@ export default function ManualOnCallAssignment() {
               type="text"
               value={holder}
               onChange={e => setHolder(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
               placeholder="Nom du titulaire"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
-            <input
-              type="date"
+            <DatePicker
               value={date}
-              onChange={e => setDate(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              onChange={setDate}
+              placeholder="Choisir une date"
             />
           </div>
           <div>
@@ -75,7 +69,7 @@ export default function ManualOnCallAssignment() {
             <select 
               value={type}
               onChange={e => setType(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
             >
               <option value="Jour">Jour</option>
               <option value="Nuit">Nuit</option>
@@ -89,7 +83,7 @@ export default function ManualOnCallAssignment() {
               type="time"
               value={startTime}
               onChange={e => setStartTime(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
             />
           </div>
           <div>
@@ -98,7 +92,7 @@ export default function ManualOnCallAssignment() {
               type="time"
               value={endTime}
               onChange={e => setEndTime(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
             />
           </div>
           <div className="md:col-span-2">
@@ -106,25 +100,16 @@ export default function ManualOnCallAssignment() {
             <textarea
               value={comment}
               onChange={e => setComment(e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-base"
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
               placeholder="Ajouter un commentaire..."
               rows={2}
             />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">Pièce jointe (facultatif)</label>
-            <input
-              type="file"
-              onChange={handleFile}
-              className="w-full"
-            />
-            {file && <span className="mt-2 text-green-700 font-medium block">{file.name}</span>}
           </div>
         </div>
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg font-semibold shadow transition text-base"
+            className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg font-semibold shadow transition text-sm"
           >
             Attribuer la garde
           </button>
