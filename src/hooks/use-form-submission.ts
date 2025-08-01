@@ -86,6 +86,13 @@ export function useFormSubmission<T = any>(
       return { success: false, errors: validationErrors };
     }
 
+    // Log des données prêtes pour le serveur
+    console.log('🚀 Données prêtes pour le serveur:', {
+      endpoint: options.endpoint,
+      method: options.method || 'POST',
+      data: data instanceof FormData ? 'FormData (fichier upload)' : data
+    });
+
     setLoading(true);
 
     try {

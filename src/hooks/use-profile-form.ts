@@ -104,6 +104,14 @@ export function useProfileForm(initialData?: Partial<ProfileFormData>) {
       submitData.append('avatar', formData.avatar);
     }
     
+    // Log des données FormData prêtes pour le serveur
+    console.log('👤 Données profil prêtes pour le serveur:', {
+      nom: formData.nom,
+      prenom: formData.prenom,
+      email: formData.email,
+      avatar: formData.avatar ? `${formData.avatar.name} (${formData.avatar.size} bytes)` : 'Aucun fichier'
+    });
+    
     const result = await submit(submitData);
     return result;
   };
