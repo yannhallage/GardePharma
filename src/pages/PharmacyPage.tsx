@@ -17,7 +17,7 @@ import MesGardesPage from './pharmacy/MesGardesPage';
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
-import { useCreateGarde } from '@/hook/useCreerGarde';
+import { useCreateGarde } from '@/hooks/useCreerGarde';
 
 const pharmacyName = 'Pharmacie du Soleil';
 

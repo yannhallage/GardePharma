@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useFormSubmission } from './use-form-submission';
-import type { ValidationSchema } from './use-form-submission';
+import { useFormSubmission } from '../src/hooks/use-form-submission';
+import type { ValidationSchema } from '../src/hooks/use-form-submission';
 
 export interface ProfileFormData {
   nom: string;
