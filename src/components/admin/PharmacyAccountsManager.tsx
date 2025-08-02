@@ -1,30 +1,32 @@
 import React, { useState } from 'react';
+import { useAddPharmacyUser } from '../../hooks/useAddPharmacyUser';
+import toast from 'react-hot-toast';
 
 const COMMUNES_CI = [
   'Abobo', 'Adjamé', 'Anyama', 'Attécoubé', 'Bingerville', 'Cocody', 'Koumassi', 'Marcory', 'Plateau', 'Port-Bouët', 'Treichville', 'Yopougon',
-  'Bouaké', 'Daloa', 'San Pedro', 'Korhogo', 'Man', 'Gagnoa', 'Soubré', 'Agboville', 'Divo', 'Abengourou', 'Grand-Bassam', 'Bondoukou', 'Odienné', 'Séguéla', 'Ferkessédougou', 'Sinfra', 'Issia', 'Sassandra', 'Boundiali', 'Aboisso', 'Toumodi', 'Daoukro', 'Dimbokro', 'Guiglo', 'Bouna', 'Akoupé', 'Vavoua', 'Tiassalé', 'Danané', 'Touba', 'Mankono', 'Agboville', 'Dabou', 'Tabou', 'Bangolo', 'Duékoué', 'Tanda', 'Béoumi', 'Zuénoula', 'Lakota', 'Oumé', 'Sakassou', 'Tiebissou', 'Arrah', 'Bocanda', 'Bongouanou', 'Didiévi', 'Djekanou', 'Guitry', 'Jacqueville', 'Katiola', 'Koun-Fao', 'Madinani', 'Minignan', 'Prikro', 'Sakassou', 'San-Pedro', 'Sassandra', 'Sinfra', 'Soubre', 'Tabou', 'Tanda', 'Tiassalé', 'Touba', 'Toumodi', 'Vavoua', 'Yamoussoukro'
+  'Bouaké', 'Daloa', 'San Pedro', 'Korhogo', 'Man', 'Gagnoa', 'Soubré', 'Agboville', 'Divo', 'Abengourou', 'Grand-Bassam', 'Bondoukou', 'Odienné', 'Séguéla', 'Ferkessédougou', 'Sinfra', 'Issia', 'Sassandra', 'Boundiali', 'Aboisso', 'Toumodi', 'Daoukro', 'Dimbokro', 'Guiglo', 'Bouna', 'Akoupé', 'Vavoua', 'Tiassalé', 'Danané', 'Touba', 'Mankono', 'Agboville', 'Dabou', 'Tabou', 'Bangolo', 'Duékoué', 'Tanda', 'Béoumi', 'Zuénoula', 'Lakota', 'Oumé', 'Sakassou', 'Tiebissou', 'Arrah', 'Bocanda', 'Bongouanou', 'Didiévi', 'Djekanou', 'Guitry', 'Jacqueville', 'Katiola', 'Koun-Fao', 'Madinani', 'Minignan', 'Prikro', 'San-Pedro', 'Sassandra', 'Sinfra', 'Soubre', 'Tabou', 'Tanda', 'Tiassalé', 'Touba', 'Toumodi', 'Vavoua', 'Yamoussoukro'
 ];
 
 export default function PharmacyAccountsManager() {
   const [formData, setFormData] = useState({
+    identification: '',
     nom_pharmacie: '',
     email: '',
-    lieu: '',
     chef_pharmacie: '',
     commune: '',
     numero: '',
   });
 
   const [errors, setErrors] = useState({
+    identification: '',
     nom_pharmacie: '',
     email: '',
-    lieu: '',
     chef_pharmacie: '',
     commune: '',
     numero: '',
   });
 
-  const [loading, setLoading] = useState(false);
+  const { add, loading } = useAddPharmacyUser();
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -34,9 +36,9 @@ export default function PharmacyAccountsManager() {
 
   const validate = () => {
     const newErrors = {
+      identification: !formData.identification ? 'L\'identifiant est requis' : '',
       nom_pharmacie: !formData.nom_pharmacie ? 'Le nom est requis' : '',
-      email: !formData.email ? 'L’email est requis' : '',
-      lieu: !formData.lieu ? 'Le lieu est requis' : '',
+      email: !formData.email ? 'L\'email est requis' : '',
       chef_pharmacie: !formData.chef_pharmacie ? 'Le chef pharmacie est requis' : '',
       commune: !formData.commune ? 'La commune est requise' : '',
       numero: !formData.numero ? 'Le numéro est requis' : '',
@@ -49,16 +51,19 @@ export default function PharmacyAccountsManager() {
     e.preventDefault();
     if (!validate()) return;
 
-    setLoading(true);
     try {
-      // Appel API simulé ici
-      console.log("Pharmacie envoyée :", formData);
-      // reset si succès
-      // setFormData({...});
-    } catch (err) {
-      console.error("Erreur lors de l'envoi :", err);
-    } finally {
-      setLoading(false);
+      await add(formData);
+      toast.success("Pharmacie ajoutée avec succès !");
+      setFormData({
+        identification: '',
+        nom_pharmacie: '',
+        email: '',
+        chef_pharmacie: '',
+        commune: '',
+        numero: ''
+      });
+    } catch (error) {
+      toast.error("Erreur lors de l'ajout de la pharmacie.");
     }
   };
 
@@ -71,57 +76,22 @@ export default function PharmacyAccountsManager() {
       >
         <h2 className="text-base font-semibold mb-8">Ajouter une pharmacie</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label htmlFor="nom_pharmacie" className="block text-sm font-medium mb-1">Nom de la pharmacie</label>
-            <input
-              id="nom_pharmacie"
-              name="nom_pharmacie"
-              value={formData.nom_pharmacie}
-              onChange={handleInput}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.nom_pharmacie ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              placeholder="Nom de la pharmacie"
-            />
-            {errors.nom_pharmacie && <div className="text-red-500 text-xs mt-1">{errors.nom_pharmacie}</div>}
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-            <input
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInput}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.email ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              placeholder="Email"
-            />
-            {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
-          </div>
-
-          <div>
-            <label htmlFor="lieu" className="block text-sm font-medium mb-1">Lieu</label>
-            <input
-              id="lieu"
-              name="lieu"
-              value={formData.lieu}
-              onChange={handleInput}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.lieu ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              placeholder="Lieu"
-            />
-            {errors.lieu && <div className="text-red-500 text-xs mt-1">{errors.lieu}</div>}
-          </div>
-
-          <div>
-            <label htmlFor="chef_pharmacie" className="block text-sm font-medium mb-1">Chef pharmacie</label>
-            <input
-              id="chef_pharmacie"
-              name="chef_pharmacie"
-              value={formData.chef_pharmacie}
-              onChange={handleInput}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.chef_pharmacie ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              placeholder="Chef pharmacie"
-            />
-            {errors.chef_pharmacie && <div className="text-red-500 text-xs mt-1">{errors.chef_pharmacie}</div>}
-          </div>
+          {['identification', 'nom_pharmacie', 'email', 'chef_pharmacie', 'numero'].map((field) => (
+            <div key={field}>
+              <label htmlFor={field} className="block text-sm font-medium mb-1">
+                {field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              </label>
+              <input
+                id={field}
+                name={field}
+                value={formData[field as keyof typeof formData]}
+                onChange={handleInput}
+                className={`w-full px-5 py-3 rounded-lg border ${errors[field as keyof typeof errors] ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
+                placeholder={field.replace('_', ' ')}
+              />
+              {errors[field as keyof typeof errors] && <div className="text-red-500 text-xs mt-1">{errors[field as keyof typeof errors]}</div>}
+            </div>
+          ))}
 
           <div>
             <label htmlFor="commune" className="block text-sm font-medium mb-1">Commune</label>
@@ -138,19 +108,6 @@ export default function PharmacyAccountsManager() {
               ))}
             </select>
             {errors.commune && <div className="text-red-500 text-xs mt-1">{errors.commune}</div>}
-          </div>
-
-          <div>
-            <label htmlFor="numero" className="block text-sm font-medium mb-1">Numéro</label>
-            <input
-              id="numero"
-              name="numero"
-              value={formData.numero}
-              onChange={handleInput}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.numero ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              placeholder="Numéro"
-            />
-            {errors.numero && <div className="text-red-500 text-xs mt-1">{errors.numero}</div>}
           </div>
         </div>
 
