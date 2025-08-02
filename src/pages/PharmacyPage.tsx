@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Select, SelectItem, SelectContent } from '../components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -16,8 +16,15 @@ import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
+import toast from 'react-hot-toast';
+import { useCreateGarde } from '@/hook/useCreerGarde';
 
 const pharmacyName = 'Pharmacie du Soleil';
+
+interface ReportModalProps {
+  open: boolean;
+  onClose: () => void;
+}
 
 const navItems = [
   { icon: Home, label: 'Accueil', key: 'Accueil' },
@@ -162,24 +169,63 @@ const CustomMonthDateCell = ({ children, value, currentMonth }) => (
 
 // Supprimer la définition locale de PlanningPage (ligne 161 à ~ligne 210)
 
-export const ReportModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
-  const [date, setDate] = useState('');
+export const ReportModal = ({ open, onClose }: ReportModalProps) => {
+  const [dateGarde, setDateGarde] = useState('');
   const [type, setType] = useState('Jour');
   const [comment, setComment] = useState('');
+
+  const { create, loading } = useCreateGarde();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!dateGarde || !type) {
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      return;
+    }
+
+    const gardeData = {
+      // reference: `GARDE-${Date.now()}`,  
+      date: dateGarde,
+      type: type,
+      nom_pharmacie: "",
+      responsable: "",
+      commune: "",
+      statut: "en_attente",
+      commentaire: comment,
+    };
+
+    try {
+      await create(gardeData);
+      toast.success("Garde signalée avec succès !");
+      onClose();
+      setDateGarde("");
+      setType("Jour");
+      setComment("");
+    } catch {
+      toast.error("Une erreur est survenue lors de la création de la garde");
+      onClose();
+    }
+  };
+
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Signaler une garde</DialogTitle>
         </DialogHeader>
-        <form className="grid grid-cols-1 gap-6">
+        <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
           <div>
             <Label>Date de garde</Label>
-            <Input type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
+            <Input type="date" value={dateGarde} onChange={(e) => setDateGarde(e.target.value)} />
           </div>
           <div>
             <Label>Type de garde</Label>
             <Select value={type} onValueChange={setType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un type" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Jour">Jour</SelectItem>
                 <SelectItem value="Nuit">Nuit</SelectItem>
@@ -194,16 +240,18 @@ export const ReportModal = ({ open, onClose }: { open: boolean; onClose: () => v
               type="text"
               placeholder="Commentaire"
               value={comment}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setComment(e.target.value)}
+              onChange={(e) => setComment(e.target.value)}
             />
           </div>
           <DialogFooter>
-            <Button type="submit"
-              className='"ml-2 bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded flex items-center gap-2"'
-            >Soumettre ma demande</Button>
+            <Button type="submit" className="bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded">
+              Soumettre ma demande
+            </Button>
           </DialogFooter>
         </form>
-        <div className="mt-6 text-yellow-700 bg-yellow-50 border border-yellow-100 rounded px-4 py-2 text-sm">En attente de validation de l’administrateur</div>
+        <div className="mt-6 text-yellow-700 bg-yellow-50 border border-yellow-100 rounded px-4 py-2 text-sm">
+          En attente de validation de l’administrateur
+        </div>
       </DialogContent>
     </Dialog>
   );
