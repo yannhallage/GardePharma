@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistorique } from '@/hook/useHistoriques';
+import { useHistorique } from '@/hooks/useHistoriques';
 // const mockHistory = [
 //   { reference: 'PH-001', date: '2024-05-01', type: 'Jour', nom_pharmacie: 'Pharmacie du Centre', responsable: 'Dr. Martin', commune: 'Paris', statut: 'Effectuée', commentaire: 'RAS' },
 //   { reference: 'PH-002', date: '2024-04-15', type: 'Nuit', nom_pharmacie: 'Pharmacie Saint-Michel', responsable: 'Dr. Dupuis', commune: 'Paris', statut: 'Signalée', commentaire: 'Indisponibilité' },

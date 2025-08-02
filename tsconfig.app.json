@@ -26,5 +26,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "code/use-profile-form.ts", "code/use-pharmacy-accounts.ts", "code/use-manual-oncall.ts", "code/use-form-submission.ts", "src/components/admin/ManualOnCallAssignment.tsx"]
 }

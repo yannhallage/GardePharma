@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
-import { api, ApiError } from '../lib/api';
+import { api, ApiError } from '../src/lib/api';
 
 export interface ValidationRule {
   required?: boolean;

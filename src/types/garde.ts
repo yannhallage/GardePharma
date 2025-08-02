@@ -13,6 +13,7 @@ export interface Garde {
 
 export interface AttributCreerGarde {
   // reference: string;
+  id:string;
   date: string;
   type: 'Jour' | 'Nuit' | 'Week-end' | 'Férié';
   nom_pharmacie: string;

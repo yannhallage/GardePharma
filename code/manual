@@ -1,87 +1,29 @@
-import React, { useState } from 'react';
-import { useCreateGarde } from '@/hooks/useCreerGarde';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { DatePicker } from '../ui/date-picker';
+import { useManualOnCallAssignment } from '../../../code/use-manual-oncall';
 
 const pharmacies = [
-  { id: '1', name: 'Pharmacie du Centre', commune: 'Abobo' },
-  { id: '2', name: 'Pharmacie Saint-Michel', commune: 'Cocody' },
+  { id: 1, name: 'Pharmacie du Centre' },
+  { id: 2, name: 'Pharmacie Saint-Michel' },
 ];
 
 export default function ManualOnCallAssignment() {
-  const [formData, setFormData] = useState({
-    pharmacy_id: '',
-    holder_name: '',
-    date: '',
-    type: 'Jour',
-    start_time: '',
-    end_time: '',
-    comment: '',
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const { create, loading } = useCreateGarde();
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setErrors(prev => ({ ...prev, [field]: '' }));
-  };
-
-  const handleDateChange = (date: Date | undefined) => {
-    const formatted = date ? date.toISOString().split('T')[0] : '';
-    handleInputChange('date', formatted);
-  };
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.pharmacy_id) newErrors.pharmacy_id = 'La pharmacie est requise';
-    if (!formData.holder_name) newErrors.holder_name = 'Le nom du titulaire est requis';
-    if (!formData.date) newErrors.date = 'La date est requise';
-    if (!formData.type) newErrors.type = 'Le type de garde est requis';
-    if (!formData.start_time) newErrors.start_time = 'L’heure de début est requise';
-    if (!formData.end_time) newErrors.end_time = 'L’heure de fin est requise';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    const selectedPharmacy = pharmacies.find(p => p.id === formData.pharmacy_id);
-    if (!selectedPharmacy) {
-      alert("Pharmacie introuvable");
-      return;
-    }
-
-    try {
-      await create({
-        date: formData.date,
-        type: formData.type as 'Jour' | 'Nuit' | 'Week-end' | 'Férié',
-        nom_pharmacie: selectedPharmacy.name,
-        responsable: formData.holder_name,
-        commune: selectedPharmacy.commune,
-        statut: 'En attente',
-        commentaire: formData.comment,
-      });
-
-      alert("Garde attribuée avec succès !");
-      setFormData({
-        pharmacy_id: '',
-        holder_name: '',
-        date: '',
-        type: 'Jour',
-        start_time: '',
-        end_time: '',
-        comment: '',
-      });
-    } catch (error) {
-      alert("Erreur lors de l’attribution de la garde.");
-    }
-  };
+  const {
+    formData,
+    loading,
+    errors,
+    handleInputChange,
+    handleDateChange,
+    handleSubmit,
+  } = useManualOnCallAssignment();
 
   return (
-    <motion.div className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10">
+    <motion.div className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10"
+      // initial={{ opacity: 0, y: 30 }}
+      // animate={{ opacity: 1, y: 0 }}
+      // transition={{ duration: 0.5 }}
+    >
       <form
         className="bg-white rounded-xl shadow-lg p-10 border w-full max-w-2xl"
         onSubmit={handleSubmit}
@@ -103,7 +45,6 @@ export default function ManualOnCallAssignment() {
             </select>
             {errors.pharmacy_id && <div className="text-red-500 text-xs mt-1">{errors.pharmacy_id}</div>}
           </div>
-
           <div>
             <label className="block text-sm font-medium mb-1">Nom du titulaire</label>
             <input
@@ -116,7 +57,6 @@ export default function ManualOnCallAssignment() {
             />
             {errors.holder_name && <div className="text-red-500 text-xs mt-1">{errors.holder_name}</div>}
           </div>
-
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
             <DatePicker
@@ -126,10 +66,9 @@ export default function ManualOnCallAssignment() {
             />
             {errors.date && <div className="text-red-500 text-xs mt-1">{errors.date}</div>}
           </div>
-
           <div>
             <label className="block text-sm font-medium mb-1">Type de garde</label>
-            <select
+            <select 
               name="type"
               value={formData.type}
               onChange={e => handleInputChange('type', e.target.value)}
@@ -142,7 +81,6 @@ export default function ManualOnCallAssignment() {
             </select>
             {errors.type && <div className="text-red-500 text-xs mt-1">{errors.type}</div>}
           </div>
-
           <div>
             <label className="block text-sm font-medium mb-1">Heure de début</label>
             <input
@@ -154,7 +92,6 @@ export default function ManualOnCallAssignment() {
             />
             {errors.start_time && <div className="text-red-500 text-xs mt-1">{errors.start_time}</div>}
           </div>
-
           <div>
             <label className="block text-sm font-medium mb-1">Heure de fin</label>
             <input
@@ -166,20 +103,19 @@ export default function ManualOnCallAssignment() {
             />
             {errors.end_time && <div className="text-red-500 text-xs mt-1">{errors.end_time}</div>}
           </div>
-
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Commentaire (optionnel)</label>
             <textarea
               name="comment"
-              value={formData.comment}
+              value={formData.comment || ''}
               onChange={e => handleInputChange('comment', e.target.value)}
-              className="w-full px-5 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm"
+              className={`w-full px-5 py-3 rounded-lg border ${errors.comment ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Ajouter un commentaire..."
               rows={2}
             />
+            {errors.comment && <div className="text-red-500 text-xs mt-1">{errors.comment}</div>}
           </div>
         </div>
-
         <div className="flex justify-end">
           <button
             type="submit"
@@ -192,4 +128,4 @@ export default function ManualOnCallAssignment() {
       </form>
     </motion.div>
   );
-}
+} 
