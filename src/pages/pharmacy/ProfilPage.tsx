@@ -47,11 +47,15 @@ const ProfilPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>First Name</Label>
+              <Label>Nom de la pharmacie</Label>
               <Input type="text" defaultValue={formData.firstName} />
             </div>
             <div>
-              <Label>Last Name</Label>
+              <Label>Nom du responsable</Label>
+              <Input type="text" defaultValue={formData.lastName} />
+            </div>
+            <div>
+              <Label>Commune</Label>
               <Input type="text" defaultValue={formData.lastName} />
             </div>
           </div>
@@ -68,8 +72,12 @@ const ProfilPage = () => {
               <Button type="button" className="bg-neutral-100 text-neutral-700 hover:bg-neutral-200 px-3 py-1 text-sm">Change email</Button>
             </div>
             <div>
-              <Label>Password</Label>
+              <Label>Mot de passe</Label>
               <Input type="password" value="********" readOnly className="bg-neutral-100" />
+            </div>
+            <div>
+              <Label>Numero de téléphone</Label>
+              <Input type="text" value="+225 0747170370" readOnly className="bg-neutral-100" />
             </div>
             <div className="flex items-end h-full">
               <Button type="button" className="bg-neutral-100 text-neutral-700 hover:bg-neutral-200 px-3 py-1 text-sm"

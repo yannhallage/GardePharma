@@ -10,3 +10,14 @@ export interface Garde {
   statutColor: string;
   commentaire: string;
 }
+
+export interface AttributCreerGarde {
+  // reference: string;
+  date: string;
+  type: 'Jour' | 'Nuit' | 'Week-end' | 'Férié';
+  nom_pharmacie: string;
+  responsable: string;
+  commune: string;
+  statut: 'En attente' | 'Validée' | 'Rejetée';
+  commentaire?: string;
+}

@@ -5,4 +5,5 @@ export const GardeService = {
   getAllGardes: async (): Promise<Garde[]> => {
     return await GardeAPI.getAll();
   },
+  
 };
