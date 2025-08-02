@@ -6,4 +6,8 @@ export const userService = {
     addPharmacyUser: async (data: AddPharmacyUserPayload) => {
         return await userApi.createPharmacyUser(data);
     },
+    GetAllListePharmacyByAdmin: async (): Promise<AddPharmacyUserPayload[]> => {
+        return await userApi.getListePharmacy();
+    }
+
 };
