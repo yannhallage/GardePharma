@@ -20,7 +20,7 @@ const mockPharmacies = [
     distance: '0.5 km',
     capacity: 100,
     logo: '🏥',
-    services: ['Médicaments', 'Conseils', 'Vaccination']  
+    services: ['Médicaments', 'Conseils', 'Vaccination']
   },
   {
     id: '2',
@@ -104,7 +104,7 @@ const UserDashboard: React.FC = () => {
   const filteredPharmacies = mockPharmacies
     .filter(pharmacy => {
       const matchesSearch = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
+        pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesDutyFilter = !showOnlyOnDuty || pharmacy.isOnDuty;
       return matchesSearch && matchesDutyFilter;
     })
@@ -206,7 +206,7 @@ const UserDashboard: React.FC = () => {
       `}</style>
 
       <Header />
-      
+
       <div className="dashboard-content">
         <Sidebar
           pharmacies={filteredPharmacies}
@@ -223,7 +223,7 @@ const UserDashboard: React.FC = () => {
           onCall={handleCall}
           onNavigate={handleNavigate}
         />
-        
+
         <div className="main-area">
           {viewMode === 'map' ? (
             <MapComponent
@@ -239,10 +239,11 @@ const UserDashboard: React.FC = () => {
           )}
         </div>
       </div>
-      
+
       <Toaster />
     </div>
   );
 };
 
-export default UserDashboard; 
+export default UserDashboard;
+

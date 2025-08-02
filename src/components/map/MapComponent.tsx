@@ -2,15 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Phone, Navigation, MapPin, Clock, Star, Users } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '../ui/dialog';
 
 // Fix des icônes Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -33,11 +24,14 @@ interface Pharmacy {
   capacity: number;
   logo: string;
   services?: string[];
+  commune: string;
+  details: string;
 }
 
 interface MapComponentProps {
   pharmacies: Pharmacy[];
-  onPharmacySelect: (pharmacy: Pharmacy) => void;
+  onPharmacySelect?: (pharmacy: Pharmacy) => void;
+  onMarkerClick?: (pharmacies: Pharmacy[]) => void;
 }
 
 // Composant pour les styles CSS de la carte
@@ -240,100 +234,7 @@ const MapStyles: React.FC = () => (
   `}</style>
 );
 
-// Composant pour le dialogue de détails de pharmacie
-interface PharmacyDialogProps {
-  pharmacy: Pharmacy | null;
-  onClose: () => void;
-}
 
-const PharmacyDialog: React.FC<PharmacyDialogProps> = ({ pharmacy, onClose }) => {
-  if (!pharmacy) return null;
-
-  return (
-    <Dialog open={!!pharmacy} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center text-lg">
-              {pharmacy.logo}
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">{pharmacy.name}</h3>
-              <p className="text-sm text-gray-500">{pharmacy.distance}</p>
-            </div>
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <MapPin className="h-4 w-4" />
-            <span>{pharmacy.address}</span>
-          </div>
-          
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Phone className="h-4 w-4" />
-            <span>{pharmacy.phone}</span>
-          </div>
-          
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Star className="h-4 w-4 text-yellow-500" />
-            <span>{pharmacy.rating}/5</span>
-          </div>
-          
-          {pharmacy.isOnDuty && (
-            <div className="flex items-center space-x-2 text-sm text-green-600">
-              <Clock className="h-4 w-4" />
-              <span>En garde: {pharmacy.dutyHours}</span>
-            </div>
-          )}
-          
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Users className="h-4 w-4" />
-            <span>Capacité: {pharmacy.capacity}%</span>
-          </div>
-          
-          {pharmacy.services && pharmacy.services.length > 0 && (
-            <div>
-              <h4 className="font-medium text-sm mb-2">Services</h4>
-              <div className="flex flex-wrap gap-2">
-                {pharmacy.services.map((service, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {service}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          <div className="flex space-x-2 pt-4">
-            <Button
-              onClick={() => {
-                window.open(`tel:${pharmacy.phone}`, '_self');
-                onClose();
-              }}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
-            >
-              <Phone className="h-4 w-4 mr-2" />
-              Appeler
-            </Button>
-            <Button
-              onClick={() => {
-                const [lat, lng] = pharmacy.coordinates;
-                window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-                onClose();
-              }}
-              variant="outline"
-              className="flex-1"
-            >
-              <Navigation className="h-4 w-4 mr-2" />
-              Itinéraire
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 // Composant de chargement
 const LoadingSpinner: React.FC = () => (
@@ -348,21 +249,21 @@ const LoadingSpinner: React.FC = () => (
 // Composant principal de la carte Leaflet
 interface LeafletMapProps {
   pharmacies: Pharmacy[];
-  onPharmacySelect: (pharmacy: Pharmacy) => void;
+  onPharmacySelect?: (pharmacy: Pharmacy) => void;
+  onMarkerClick?: (pharmacies: Pharmacy[]) => void;
 }
 
-const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect }) => {
+const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, onMarkerClick }) => {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
 
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
 
     const map = L.map(containerRef.current, {
-      center: [48.8566, 2.3522],
-      zoom: 13,
+      center: [7.54, -5.55], // Côte d'Ivoire
+      zoom: 7,
       zoomControl: false, // On va ajouter nos propres contrôles
       attributionControl: false
     });
@@ -401,18 +302,26 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect })
       }
     });
 
-    // Ajouter les nouveaux marqueurs
-    pharmacies.forEach((pharmacy, index) => {
-      const [lat, lng] = pharmacy.coordinates;
-      
+    // Grouper les pharmacies par commune
+    const pharmaciesByCommune: { [key: string]: Pharmacy[] } = {};
+    pharmacies.forEach((pharmacy) => {
+      if (!pharmaciesByCommune[pharmacy.commune]) {
+        pharmaciesByCommune[pharmacy.commune] = [];
+      }
+      pharmaciesByCommune[pharmacy.commune].push(pharmacy);
+    });
+
+    Object.entries(pharmaciesByCommune).forEach(([commune, group], index) => {
+      // Prendre les coordonnées de la première pharmacie de la commune
+      const [lat, lng] = group[0].coordinates;
+      const onDutyPharmacies = group.filter((p) => p.isOnDuty);
+      if (onDutyPharmacies.length === 0) return;
+
       // Créer un marqueur personnalisé
       const markerElement = document.createElement('div');
-      markerElement.className = `custom-marker ${pharmacy.isOnDuty ? 'on-duty' : ''}`;
-      markerElement.innerHTML = (index + 1).toString();
-      
-      if (pharmacy.isOnDuty) {
-        markerElement.classList.add('pulse-animation');
-      }
+      markerElement.className = `custom-marker on-duty`;
+      markerElement.innerHTML = commune.substring(0, 3).toUpperCase(); // Afficher les 3 premières lettres de la commune
+      markerElement.classList.add('pulse-animation');
 
       const customIcon = L.divIcon({
         html: markerElement,
@@ -424,42 +333,23 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect })
 
       const marker = L.marker([lat, lng], { icon: customIcon }).addTo(mapRef.current!);
 
-      // Popup avec informations de base
-      const popupContent = `
-        <div style="min-width: 200px;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <div style="width: 32px; height: 32px; background: ${pharmacy.isOnDuty ? '#10b981' : '#6b7280'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-              ${index + 1}
-            </div>
-            <div>
-              <h3 style="margin: 0; font-weight: 600; font-size: 14px;">${pharmacy.name}</h3>
-              <p style="margin: 0; font-size: 12px; color: #6b7280;">${pharmacy.distance}</p>
-            </div>
-          </div>
-          <p style="margin: 0 0 8px 0; font-size: 12px; color: #374151;">${pharmacy.address}</p>
-          <div style="display: flex; gap: 8px;">
-            <span style="font-size: 12px; color: #6b7280;">⭐ ${pharmacy.rating}/5</span>
-            ${pharmacy.isOnDuty ? `<span style="font-size: 12px; color: #10b981;">🕒 En garde</span>` : ''}
-          </div>
-        </div>
-      `;
-
-      marker.bindPopup(popupContent);
-
-      // Événement de clic
       marker.on('click', () => {
-        setSelectedPharmacy(pharmacy);
-        onPharmacySelect(pharmacy);
+        if (onPharmacySelect) {
+          onPharmacySelect(group[0]);
+        }
+        if (onMarkerClick) {
+          onMarkerClick(group); // Passer toutes les pharmacies de la commune
+        }
       });
     });
-  }, [pharmacies, onPharmacySelect]);
+  }, [pharmacies, onPharmacySelect, onMarkerClick]);
 
   return (
     <div className="relative h-full">
       <MapStyles />
       
       {/* Logo GardePharma */}
-      <div className="logo-container">
+      {/* <div className="logo-container">
         <div className="logo-wrapper">
           <img 
             src="https://media.designrush.com/inspiration_images/549120/conversions/Pharma_ee5626592827-desktop.jpg" 
@@ -468,10 +358,10 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect })
           />
           <span className="logo-text">GardePharma</span>
         </div>
-      </div>
+      </div> */}
 
       {/* Barre d'informations de transport */}
-      <div className="transport-info-bar">
+      {/* <div className="transport-info-bar">
         <div className="transport-item">
           <svg className="transport-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
@@ -502,19 +392,14 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect })
           </svg>
           <span>2 min</span>
         </div>
-      </div>
+      </div> */}
 
       <div ref={containerRef} className="h-full w-full" />
-      
-      <PharmacyDialog 
-        pharmacy={selectedPharmacy} 
-        onClose={() => setSelectedPharmacy(null)} 
-      />
     </div>
   );
 };
 
-const MapComponent: React.FC<MapComponentProps> = ({ pharmacies, onPharmacySelect }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ pharmacies, onPharmacySelect, onMarkerClick }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -530,7 +415,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ pharmacies, onPharmacySelec
     return <LoadingSpinner />;
   }
 
-  return <LeafletMap pharmacies={pharmacies} onPharmacySelect={onPharmacySelect} />;
+  return <LeafletMap pharmacies={pharmacies} onPharmacySelect={onPharmacySelect} onMarkerClick={onMarkerClick} />;
 };
 
 export default MapComponent;
