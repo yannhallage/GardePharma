@@ -51,7 +51,7 @@ export default function GuardsSection() {
       )}
 
       {error && (
-        <div className="text-red-500 text-sm py-8 text-center">Erreur : {error}</div>
+        <div className="text-red-500 text-sm py-8 text-center">Un probleme au niveau du serveur  : {error}</div>
       )}
 
       {!loading && !error && (

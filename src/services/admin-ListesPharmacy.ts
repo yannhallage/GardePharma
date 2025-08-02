@@ -8,6 +8,9 @@ export const userService = {
     },
     GetAllListePharmacyByAdmin: async (): Promise<AddPharmacyUserPayload[]> => {
         return await userApi.getListePharmacy();
-    }
+    },
+    deletePharmacy: async (id: string): Promise<void> => {
+        return await userApi.deletePharmacy(id);
+    },
 
 };
