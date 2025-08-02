@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { useUserProfilePharmacy, useUpdateUserProfilePharmacy } from '@/hook/useUpdateProfilPharmacy';
+import { useUserProfilePharmacy, useUpdateUserProfilePharmacy } from '@/hooks/useUpdateProfilPharmacy';
 import type { UserProfile } from '@/types/UserProfilePharmacy'
 import toast from 'react-hot-toast';
 

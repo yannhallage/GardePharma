@@ -1,5 +1,4 @@
-import React from 'react';
-import { usePharmacyAccounts } from '../../hooks/use-pharmacy-accounts';
+import React, { useState } from 'react';
 
 const COMMUNES_CI = [
   'Abobo', 'Adjamé', 'Anyama', 'Attécoubé', 'Bingerville', 'Cocody', 'Koumassi', 'Marcory', 'Plateau', 'Port-Bouët', 'Treichville', 'Yopougon',
@@ -7,17 +6,61 @@ const COMMUNES_CI = [
 ];
 
 export default function PharmacyAccountsManager() {
-  const {
-    formData,
-    loading,
-    errors,
-    handleInputChange,
-    handleSubmit,
-  } = usePharmacyAccounts();
+  const [formData, setFormData] = useState({
+    nom_pharmacie: '',
+    email: '',
+    lieu: '',
+    chef_pharmacie: '',
+    commune: '',
+    numero: '',
+  });
 
-  function handleInput(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-    handleInputChange(e.target.name as keyof typeof formData, e.target.value);
-  }
+  const [errors, setErrors] = useState({
+    nom_pharmacie: '',
+    email: '',
+    lieu: '',
+    chef_pharmacie: '',
+    commune: '',
+    numero: '',
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const validate = () => {
+    const newErrors = {
+      nom_pharmacie: !formData.nom_pharmacie ? 'Le nom est requis' : '',
+      email: !formData.email ? 'L’email est requis' : '',
+      lieu: !formData.lieu ? 'Le lieu est requis' : '',
+      chef_pharmacie: !formData.chef_pharmacie ? 'Le chef pharmacie est requis' : '',
+      commune: !formData.commune ? 'La commune est requise' : '',
+      numero: !formData.numero ? 'Le numéro est requis' : '',
+    };
+    setErrors(newErrors);
+    return Object.values(newErrors).every(err => err === '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setLoading(true);
+    try {
+      // Appel API simulé ici
+      console.log("Pharmacie envoyée :", formData);
+      // reset si succès
+      // setFormData({...});
+    } catch (err) {
+      console.error("Erreur lors de l'envoi :", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-10">
@@ -37,11 +80,10 @@ export default function PharmacyAccountsManager() {
               onChange={handleInput}
               className={`w-full px-5 py-3 rounded-lg border ${errors.nom_pharmacie ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Nom de la pharmacie"
-              aria-invalid={!!errors.nom_pharmacie}
-              aria-describedby={errors.nom_pharmacie ? 'nom_pharmacie-error' : undefined}
             />
-            {errors.nom_pharmacie && <div id="nom_pharmacie-error" className="text-red-500 text-xs mt-1">{errors.nom_pharmacie}</div>}
+            {errors.nom_pharmacie && <div className="text-red-500 text-xs mt-1">{errors.nom_pharmacie}</div>}
           </div>
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
             <input
@@ -51,11 +93,10 @@ export default function PharmacyAccountsManager() {
               onChange={handleInput}
               className={`w-full px-5 py-3 rounded-lg border ${errors.email ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Email"
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'email-error' : undefined}
             />
-            {errors.email && <div id="email-error" className="text-red-500 text-xs mt-1">{errors.email}</div>}
+            {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
           </div>
+
           <div>
             <label htmlFor="lieu" className="block text-sm font-medium mb-1">Lieu</label>
             <input
@@ -65,11 +106,10 @@ export default function PharmacyAccountsManager() {
               onChange={handleInput}
               className={`w-full px-5 py-3 rounded-lg border ${errors.lieu ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Lieu"
-              aria-invalid={!!errors.lieu}
-              aria-describedby={errors.lieu ? 'lieu-error' : undefined}
             />
-            {errors.lieu && <div id="lieu-error" className="text-red-500 text-xs mt-1">{errors.lieu}</div>}
+            {errors.lieu && <div className="text-red-500 text-xs mt-1">{errors.lieu}</div>}
           </div>
+
           <div>
             <label htmlFor="chef_pharmacie" className="block text-sm font-medium mb-1">Chef pharmacie</label>
             <input
@@ -79,11 +119,10 @@ export default function PharmacyAccountsManager() {
               onChange={handleInput}
               className={`w-full px-5 py-3 rounded-lg border ${errors.chef_pharmacie ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Chef pharmacie"
-              aria-invalid={!!errors.chef_pharmacie}
-              aria-describedby={errors.chef_pharmacie ? 'chef_pharmacie-error' : undefined}
             />
-            {errors.chef_pharmacie && <div id="chef_pharmacie-error" className="text-red-500 text-xs mt-1">{errors.chef_pharmacie}</div>}
+            {errors.chef_pharmacie && <div className="text-red-500 text-xs mt-1">{errors.chef_pharmacie}</div>}
           </div>
+
           <div>
             <label htmlFor="commune" className="block text-sm font-medium mb-1">Commune</label>
             <select
@@ -92,16 +131,15 @@ export default function PharmacyAccountsManager() {
               value={formData.commune}
               onChange={handleInput}
               className={`w-full px-5 py-3 rounded-lg border ${errors.commune ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              aria-invalid={!!errors.commune}
-              aria-describedby={errors.commune ? 'commune-error' : undefined}
             >
               <option value="">Sélectionner la commune</option>
               {COMMUNES_CI.map((commune) => (
                 <option key={commune} value={commune}>{commune}</option>
               ))}
             </select>
-            {errors.commune && <div id="commune-error" className="text-red-500 text-xs mt-1">{errors.commune}</div>}
+            {errors.commune && <div className="text-red-500 text-xs mt-1">{errors.commune}</div>}
           </div>
+
           <div>
             <label htmlFor="numero" className="block text-sm font-medium mb-1">Numéro</label>
             <input
@@ -111,12 +149,11 @@ export default function PharmacyAccountsManager() {
               onChange={handleInput}
               className={`w-full px-5 py-3 rounded-lg border ${errors.numero ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
               placeholder="Numéro"
-              aria-invalid={!!errors.numero}
-              aria-describedby={errors.numero ? 'numero-error' : undefined}
             />
-            {errors.numero && <div id="numero-error" className="text-red-500 text-xs mt-1">{errors.numero}</div>}
+            {errors.numero && <div className="text-red-500 text-xs mt-1">{errors.numero}</div>}
           </div>
         </div>
+
         <div className="flex justify-end">
           <button
             type="submit"
@@ -129,4 +166,4 @@ export default function PharmacyAccountsManager() {
       </form>
     </div>
   );
-} 
+}
