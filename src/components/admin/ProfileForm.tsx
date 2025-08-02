@@ -1,6 +1,7 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
+import { useUpdateUserProfile } from '../../hooks/useUpdateUserProfile';
 
 interface ProfileFormProps {
   initialData?: {
@@ -16,16 +17,21 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     nom: initialData?.nom || '',
     prenom: initialData?.prenom || '',
     email: initialData?.email || '',
+    numero: '',
+    motdepasse: '',
   });
 
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [errors, setErrors] = useState({
     nom: '',
     prenom: '',
     email: '',
+    numero: '',
+    motdepasse: '',
   });
 
   const [loading, setLoading] = useState(false);
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const { update } = useUpdateUserProfile();
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,9 +49,11 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
       nom: !formData.nom ? 'Le nom est requis' : '',
       prenom: !formData.prenom ? 'Le prénom est requis' : '',
       email: !formData.email ? 'L’email est requis' : '',
+      numero: !formData.numero ? 'Le numéro est requis' : '',
+      motdepasse: !formData.motdepasse ? 'Le mot de passe est requis' : '',
     };
     setErrors(newErrors);
-    return !newErrors.nom && !newErrors.prenom && !newErrors.email;
+    return Object.values(newErrors).every(err => !err);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,13 +62,19 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
     setLoading(true);
     try {
-      console.log("Données envoyées :", formData);
-      if (avatar) {
-        console.log("Fichier avatar :", avatar.name);
-      }
-      // success
+      await update({
+        identification: formData.email,
+        nom: formData.nom,
+        prenom: formData.prenom,
+        email: formData.email,
+        numero: formData.numero,
+        motdepasse: formData.motdepasse,
+        avatar,
+      });
+      toast.success('Profil mis à jour !');
     } catch (err) {
-      console.error("Erreur lors de la mise à jour :", err);
+      toast.error('Échec de la mise à jour.');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -79,6 +93,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         noValidate
       >
         <h2 className="text-base font-semibold mb-8">Mon profil</h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <label className="block text-xs font-medium mb-1">Nom</label>
@@ -92,6 +107,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             />
             {errors.nom && <div className="text-red-500 text-xs mt-1">{errors.nom}</div>}
           </div>
+
           <div>
             <label className="block text-xs font-medium mb-1">Prénom</label>
             <input
@@ -104,6 +120,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             />
             {errors.prenom && <div className="text-red-500 text-xs mt-1">{errors.prenom}</div>}
           </div>
+
           <div className="md:col-span-2">
             <label className="block text-xs font-medium mb-1">Email</label>
             <input
@@ -115,6 +132,32 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
               className={`w-full px-5 py-3 rounded-lg border ${errors.email ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             />
             {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-xs font-medium mb-1">Numéro</label>
+            <input
+              type="text"
+              name="numero"
+              value={formData.numero}
+              onChange={handleInput}
+              placeholder="Numéro"
+              className={`w-full px-5 py-3 rounded-lg border ${errors.numero ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
+            />
+            {errors.numero && <div className="text-red-500 text-xs mt-1">{errors.numero}</div>}
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-xs font-medium mb-1">Mot de passe</label>
+            <input
+              type="password"
+              name="motdepasse"
+              value={formData.motdepasse}
+              onChange={handleInput}
+              placeholder="Mot de passe"
+              className={`w-full px-5 py-3 rounded-lg border ${errors.motdepasse ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
+            />
+            {errors.motdepasse && <div className="text-red-500 text-xs mt-1">{errors.motdepasse}</div>}
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, Users, Key, UserCog, Home, History } from 'lucide-react';
+import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, Users, UserCog, Home, History } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import FullCalendarView from '../components/admin/FullCalendarView';
 import ExportPlanningButton from '../components/admin/ExportPlanningButton';
