@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Eye, EyeOff, Building2, Shield, Mail, Lock, ArrowRight } from 'lucide-react';
 import AuthLayout from '../components/auth/AuthLayout';
+import { useAuth, useAuthAdmin } from '@/hooks/auth/useAuth';
+import toast from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
   const [userType, setUserType] = useState<'pharmacy' | 'admin'>('pharmacy');
@@ -13,32 +16,56 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  const { login } = useAuth();
+  const { loginAdmin } = useAuthAdmin();
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulation d'une connexion
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log('Connexion:', { userType, email, password, rememberMe });
-      // Ici on redirigerait vers le dashboard approprié
-    }, 1500);
+    console.log(userType)
+
+    if (userType == 'admin') {
+      try {
+        const response = await loginAdmin({ userType, email, password });
+        console.log(response)
+        toast.success('Connexion réussie');
+        navigate('/administrateur');
+      } catch (error: any) {
+        console.error('Erreur de connexion', error);
+        toast.error('Échec de la connexion. Veuillez vérifier vos identifiants.');
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      try {
+        const response = await login({ userType, email, password });
+
+        console.log(response)
+        toast.success('Connexion réussie');
+        navigate('/pharmacy');
+
+      } catch (error: any) {
+        console.error('Erreur de connexion', error);
+        toast.error('Échec de la connexion. Veuillez vérifier vos identifiants.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
     <AuthLayout title="GardePharma" subtitle="Connectez-vous à votre espace">
-      {/* Sélecteur de type d'utilisateur */}
       <Card className="mb-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
         <CardContent className="pt-4">
           <div className="flex space-x-1 p-1 bg-neutral-100 rounded-lg">
             <Button
               variant={userType === 'pharmacy' ? 'default' : 'ghost'}
               size="sm"
-              className={`flex-1 transition-all duration-200 text-xs h-8 ${
-                userType === 'pharmacy' 
-                  ? 'bg-white shadow-sm text-primary-600' 
-                  : 'text-neutral-600 hover:text-neutral-800'
-              }`}
+              className={`flex-1 transition-all duration-200 text-xs h-8 ${userType === 'pharmacy'
+                ? 'bg-white shadow-sm text-primary-600'
+                : 'text-neutral-600 hover:text-neutral-800'
+                }`}
               onClick={() => setUserType('pharmacy')}
             >
               <Building2 className="h-3 w-3 mr-1" />
@@ -47,11 +74,10 @@ const LoginPage: React.FC = () => {
             <Button
               variant={userType === 'admin' ? 'default' : 'ghost'}
               size="sm"
-              className={`flex-1 transition-all duration-200 text-xs h-8 ${
-                userType === 'admin' 
-                  ? 'bg-white shadow-sm text-primary-600' 
-                  : 'text-neutral-600 hover:text-neutral-800'
-              }`}
+              className={`flex-1 transition-all duration-200 text-xs h-8 ${userType === 'admin'
+                ? 'bg-white shadow-sm text-primary-600'
+                : 'text-neutral-600 hover:text-neutral-800'
+                }`}
               onClick={() => setUserType('admin')}
             >
               <Shield className="h-3 w-3 mr-1" />
@@ -60,7 +86,6 @@ const LoginPage: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-      {/* Formulaire de connexion */}
       <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-center text-lg">
@@ -154,8 +179,8 @@ const LoginPage: React.FC = () => {
           <div className="mt-4 text-center">
             <p className="text-xs text-neutral-600">
               Pas encore de compte ?{' '}
-              <Link 
-                to="/register" 
+              <Link
+                to="/register"
                 className="text-primary-600 hover:text-primary-500 font-semibold transition-colors"
               >
                 Créer un compte
@@ -164,10 +189,9 @@ const LoginPage: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-      {/* Informations supplémentaires */}
       <div className="mt-6 text-center">
         <p className="text-xs text-neutral-500 leading-relaxed">
-          {userType === 'pharmacy' 
+          {userType === 'pharmacy'
             ? 'Accédez à votre planning de garde, gérez vos informations et consultez l\'historique de vos gardes'
             : 'Gérez les pharmacies, les plannings de garde et les droits d\'accès du système'
           }
