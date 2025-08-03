@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Authentification, AuthentificationResponse } from '@/types/auth/authentification.type';
 import type { AuthAdmin, AuthAdminResponse } from '@/types/auth/authAdmin.types'
 import { authService } from '@/services/auth/authService';
+import { LocalStorage } from '@/lib/local-storage';
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -12,6 +13,7 @@ export const useAuth = () => {
         setError(null);
         try {
             const response = await authService.login(credentials);
+            LocalStorage(response)
             return response;
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erreur de connexion');
@@ -33,6 +35,7 @@ export const useAuthAdmin = () => {
         setError(null);
         try {
             const response = await authService.loginAdmin(credentials);
+            LocalStorage(response)
             return response;
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erreur de connexion');
@@ -44,3 +47,5 @@ export const useAuthAdmin = () => {
 
     return { loginAdmin, loading, error };
 };
+
+

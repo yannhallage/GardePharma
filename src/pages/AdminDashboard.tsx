@@ -11,6 +11,7 @@ import GuardsSection from '../components/admin/GuardsSection';
 import { motion } from 'framer-motion';
 import AdminHistory from '../components/admin/AdminHistory';
 import ProfileForm from '../components/admin/ProfileForm';
+import { removeSession } from '@/lib/local-storage';
 
 const adminName = 'Administrateur';
 const navItems = [
@@ -39,7 +40,11 @@ const AdminLayout: React.FC<{ tab: string; setTab: (t: string) => void; children
           <div className="flex items-center space-x-4">
             <span className="text-green-700 font-semibold">{adminName}</span>
             <img src={logoUrl} alt="Admin" className="w-10 h-10 rounded-full border-2 border-green-200" />
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2"
+              onClick={() => {
+                removeSession()
+              }}
+            >
               <LogOut className="h-4 w-4 mr-2" /> Déconnexion
             </Button>
           </div>
@@ -156,10 +161,10 @@ function StatCard({ label, value }: { label: string; value: string }) {
 
 function ProfileFormSection() {
   return (
-    <ProfileForm 
+    <ProfileForm
       initialData={{
         nom: "Dupont",
-        prenom: "Jean", 
+        prenom: "Jean",
         email: "admin@gardepharma.com",
         avatar_url: logoUrl
       }}
