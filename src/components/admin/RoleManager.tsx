@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 import { useGetAllPharmacy } from '@/hooks/useGetAllPharmacy';
-import { userService } from '@/services/admin-ListesPharmacy';
+import { getSession } from '@/helpers/local-storage';
+// import { userService } from '@/services/admin-ListesPharmacy';
 
 const columns = [
   { key: 'id', label: 'Identification' },
@@ -63,7 +64,7 @@ export default function RoleManager() {
   const [page, setPage] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const { data: pharmacies, loading, error } = useGetAllPharmacy(refreshKey);
+  const { data: pharmacies, loading, error } = useGetAllPharmacy(getSession()?.userId ?? undefined);
   const pageSize = 5;
 
   const filteredPharmacies = pharmacies.filter(pharma =>
@@ -84,7 +85,7 @@ export default function RoleManager() {
   const handleDelete = async (identification: string) => {
     if (!window.confirm('Voulez-vous vraiment supprimer cette pharmacie ?')) return;
     try {
-      await userService.deletePharmacy(identification);
+      // await userService.deletePharmacy(identification);
       toast.success('Pharmacie supprimée avec succès.');
       setRefreshKey(k => k + 1);
     } catch (error) {
@@ -98,8 +99,8 @@ export default function RoleManager() {
   };
 
   return (
-    <motion.div className="p-4 md:p-6">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200 max-w-5xl mx-auto">
+    <motion.div className="p-4">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200 mx-auto">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5" />
