@@ -1,9 +1,9 @@
 // src/api/gardeApi.ts
-import type { AttributCreerGarde } from '../types/garde';
+import type { AttributCreerGarde,ListGardByAdminResponse } from '../types/garde';
 import { axiosAdmin,axiosPharma } from './axiosClient';
 
 export const GardeAPI = {
-  getAll: async (id: string): Promise<AttributCreerGarde[]> => {
+  getAll: async (id: string): Promise<ListGardByAdminResponse> => {
     const res = await axiosAdmin.get(`/gererGardes/${id}`);
     return res.data;
   },

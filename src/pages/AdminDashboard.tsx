@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import AdminHistory from '../components/admin/AdminHistory';
 import ProfileForm from '../components/admin/ProfileForm';
 import { removeSession } from '@/helpers/local-storage';
+import toast from 'react-hot-toast';
 
 const adminName = 'Administrateur';
 const navItems = [
@@ -47,6 +48,7 @@ const AdminLayout: React.FC<{ tab: string; setTab: (t: string) => void; children
                 onClick={() => {
                   removeSession()
                   navigate('/login')
+                  toast.success('Déconnexion réussie !')
                 }}
               >
                 <LogOut className="h-4 w-4 mr-2" /> Déconnexion

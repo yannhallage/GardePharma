@@ -3,16 +3,23 @@
 export interface AddPharmacyUserPayload {
     identification: string;
     nom_pharmacie: string;
-    email: string;
+    email?: string;
     chef_pharmacie: string;
     lieu?: string;
     commune: string;
     numero: string;
     details?: string;
-    motdepasse?: string;
+    // motdepasse?: string;
 }
 
 export interface AddPharmacyUserResponse {
     message: string;
     userId?: string;
 }
+
+
+export type ListPharmacyByAdminResponse = {
+  success: boolean;
+  message: string;
+  data: AddPharmacyUserPayload[];
+};
