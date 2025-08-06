@@ -1,18 +1,18 @@
 // des actions sur la pharmacies a partie de l'administrateur 
 
-import { http, axiosClient } from './axiosClient';
+import { http, axiosPharma, axiosAdmin } from './axiosClient';
 import type { AddPharmacyUserPayload, AddPharmacyUserResponse } from '../types/ListesPharmacy.type';
 
 export const userApi = {
-    createPharmacyUser: (data: AddPharmacyUserPayload) =>
-        http.post<AddPharmacyUserResponse>('/pharmacies', data),
+    createPharmacyUser: async (data: AddPharmacyUserPayload, id: string) =>
+        http.post<AddPharmacyUserResponse>(axiosAdmin, `/creerPharmacy/${id}`, data),
 
-    getListePharmacy: async (): Promise<AddPharmacyUserPayload[]> => {
-        const res = await axiosClient.get('/pharmacies');
+    getListePharmacy: async (id: string): Promise<AddPharmacyUserPayload[]> => {
+        const res = await axiosAdmin.get(`/obtenirListePharmacy/${id}`);
         return res.data;
     },
     deletePharmacy: async (identification: string): Promise<void> => {
-        await axiosClient.delete(`/pharmacies/supprimer/${identification}`);
+        await axiosAdmin.delete(`/pharmacies/supprimer/${identification}`);
     },
 
 }

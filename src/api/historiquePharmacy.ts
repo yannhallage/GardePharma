@@ -1,11 +1,15 @@
 
 import type { Historique_Pharmacy } from "@/types/historiques";
-import { axiosClient } from "./axiosClient";
+import { axiosPharma } from "./axiosClient";
 
 
 export const HistoriqueAPI_Pharmacy = {
-  getAll: async (): Promise<Historique_Pharmacy[]> => {
-    const res = await axiosClient.get('/historique');
+  getAll: async (id: string): Promise<Historique_Pharmacy[]> => {
+    const res = await axiosPharma.get(`/histroriquesGardes/${id}`);
     return res.data;
   },
+  // getAllHistoriqueByAdmin: async (id: string): Promise<Historique_Pharmacy[]> => {
+  //   const res = await axiosAdmin.get(`/listehistorique/${id}`);
+  //   return res.data;
+  // },
 };

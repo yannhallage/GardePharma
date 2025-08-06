@@ -3,8 +3,9 @@
 export interface AdminHistoryItem {
     reference: string;
     date: string;
-    action: 'Ajout' | 'Modification' | 'Suppression';
+    action: string;
     user: string;
-    responsible: string;
+    responsable: string;
     details?: string;
 }
+// action: 'Ajout' | 'Modification' | 'Suppression';

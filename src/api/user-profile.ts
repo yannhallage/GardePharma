@@ -1,7 +1,7 @@
-import { http } from './axiosClient';
+import { http, axiosAdmin } from './axiosClient';
 import type { UpdateUserProfilePayload } from '../types/user-profile.type';
 
-export const updateUserProfile = (data: UpdateUserProfilePayload) => {
+export const updateUserProfile = (data: UpdateUserProfilePayload, id: string) => {
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -10,7 +10,7 @@ export const updateUserProfile = (data: UpdateUserProfilePayload) => {
         }
     });
 
-    return http.put<any, FormData>('/users/profile', formData, {
+    return http.put<any, FormData>(axiosAdmin, `/mofifierProfil/${id}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
