@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, Users, UserCog, Home, History } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import FullCalendarView from '../components/admin/FullCalendarView';
@@ -11,7 +12,7 @@ import GuardsSection from '../components/admin/GuardsSection';
 import { motion } from 'framer-motion';
 import AdminHistory from '../components/admin/AdminHistory';
 import ProfileForm from '../components/admin/ProfileForm';
-import { removeSession } from '@/lib/local-storage';
+import { removeSession } from '@/helpers/local-storage';
 
 const adminName = 'Administrateur';
 const navItems = [
@@ -27,54 +28,59 @@ const navItems = [
 
 const logoUrl = "https://media.designrush.com/inspiration_images/549120/conversions/Pharma_ee5626592827-desktop.jpg";
 
-const AdminLayout: React.FC<{ tab: string; setTab: (t: string) => void; children: React.ReactNode }> = ({ tab, setTab, children }) => (
-  <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100">
-    {/* Header */}
-    <header className="bg-white shadow-sm border-b border-green-200 sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center gap-4">
-            <img src={logoUrl} alt="GardePharma" className="w-10 h-10 rounded-lg object-cover shadow" />
-            <h1 className="text-xl font-bold text-green-600 tracking-tight">GardePharma Admin</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-green-700 font-semibold">{adminName}</span>
-            <img src={logoUrl} alt="Admin" className="w-10 h-10 rounded-full border-2 border-green-200" />
-            <Button variant="outline" size="sm" className="flex items-center gap-2"
-              onClick={() => {
-                removeSession()
-              }}
-            >
-              <LogOut className="h-4 w-4 mr-2" /> Déconnexion
-            </Button>
+const AdminLayout: React.FC<{ tab: string; setTab: (t: string) => void; children: React.ReactNode }> = ({ tab, setTab, children }) => {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-green-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-4">
+              <img src={logoUrl} alt="GardePharma" className="w-10 h-10 rounded-lg object-cover shadow" />
+              <h1 className="text-xl font-bold text-green-600 tracking-tight">GardePharma Admin</h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-green-700 font-semibold">{adminName}</span>
+              <img src={logoUrl} alt="Admin" className="w-10 h-10 rounded-full border-2 border-green-200" />
+              <Button variant="outline" size="sm" className="flex items-center gap-2"
+                onClick={() => {
+                  removeSession()
+                  navigate('/login')
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-    {/* Navigation */}
-    <nav className="bg-white border-b border-green-200 sticky top-16 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex space-x-8">
-          {navItems.map((item) => (
-            <motion.button
-              key={item.key}
-              onClick={() => setTab(item.key)}
-              whileHover={{ scale: 1.08 }}
-              className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-green-700 border-green-600 bg-green-50' : 'text-neutral-600 border-transparent hover:text-green-700 hover:border-green-400'}`}
-            >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
-            </motion.button>
-          ))}
+      </header>
+      {/* Navigation */}
+      <nav className="bg-white border-b border-green-200 sticky top-16 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            {navItems.map((item) => (
+              <motion.button
+                key={item.key}
+                onClick={() => setTab(item.key)}
+                whileHover={{ scale: 1.08 }}
+                className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-green-700 border-green-600 bg-green-50' : 'text-neutral-600 border-transparent hover:text-green-700 hover:border-green-400'}`}
+              >
+                <item.icon className="h-4 w-4 mr-2" />
+                {item.label}
+              </motion.button>
+            ))}
+          </div>
         </div>
-      </div>
-    </nav>
-    {/* Main Content */}
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {children}
-    </main>
-  </div>
-);
+      </nav>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {children}
+      </main>
+    </div>
+  );
+}
+
 
 const sectionMotion = {
   initial: { opacity: 0, y: 30 },

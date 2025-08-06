@@ -18,7 +18,7 @@ import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
 import { useCreateGarde } from '@/hooks/useCreerGarde';
-import { removeSession } from '@/lib/local-storage';
+import { removeSession } from '@/helpers/local-storage';
 
 const pharmacyName = 'Pharmacie du Soleil';
 

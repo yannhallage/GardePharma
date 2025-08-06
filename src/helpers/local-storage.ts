@@ -1,4 +1,5 @@
 import type { AuthentificationResponse } from '../types/auth/authentification.type';
+
 import type { AuthAdminResponse } from '../types/auth/authAdmin.types';
 import type { PharmacyRegisterResponse } from '../types/register/pharmacy-register';
 
@@ -21,6 +22,29 @@ export const LocalStorage = (response: AuthentificationResponse | AuthAdminRespo
     return setSession({
         authToken: response.token,
         userEmail: response.user.email,
-        userType: response.user.userType
+        userType: response.user.userType,
+        userId: response.user.id,
+        userNom: response.user.nom,
+        userPrenom: response.user.prenom,
     })
 }
+
+export const getSession = () => {
+    const token = localStorage.getItem('authToken');
+    const userEmail = localStorage.getItem('userEmail');
+    const userType = localStorage.getItem('userType');
+    const userId = localStorage.getItem('userId');
+    const userNom = localStorage.getItem('userNom');
+    const userPrenom = localStorage.getItem('userPrenom');
+
+    if (!token || !userEmail || !userType) return null;
+
+    return {
+        token,
+        userEmail,
+        userType,
+        userId,
+        userNom,
+        userPrenom,
+    };
+};

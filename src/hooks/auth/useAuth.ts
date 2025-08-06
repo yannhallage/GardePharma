@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Authentification, AuthentificationResponse } from '@/types/auth/authentification.type';
 import type { AuthAdmin, AuthAdminResponse } from '@/types/auth/authAdmin.types'
 import { authService } from '@/services/auth/authService';
-import { LocalStorage } from '@/lib/local-storage';
+import { LocalStorage } from '@/helpers/local-storage';
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false);
