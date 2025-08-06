@@ -3,13 +3,15 @@ import { MoreVertical, Trash2 } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { toast } from 'react-hot-toast';
 import { useGardes } from '@/hooks/useGardes';
+import { getSession } from '@/helpers/local-storage';
+
 import { GardeService } from '@/services/gardeService';
 
 function statusLabel(status: string) {
   switch (status) {
-    case 'en_cours':
+    case 'en cours':
       return <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-semibold">En cours</span>;
-    case 'en_attente':
+    case 'en attente':
       return <span className="bg-yellow-50 text-yellow-700 border border-yellow-200 px-3 py-1 rounded-full text-xs font-semibold">En attente</span>;
     default:
       return null;
@@ -18,7 +20,7 @@ function statusLabel(status: string) {
 
 export default function GuardsSection() {
   const [refreshKey, setRefreshKey] = useState(0);
-  const { gardes, loading, error } = useGardes(refreshKey);
+  const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined);
 
   const handleDelete = async (id: string) => {
     try {

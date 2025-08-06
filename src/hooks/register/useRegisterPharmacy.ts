@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { PharmacyRegister, PharmacyRegisterResponse } from '../../types/register/pharmacy-register';
 import { registerPharmacyService } from '@/services/register/register-pharmacyService';
-
+import { LocalStorage } from '@/helpers/local-storage';
 
 export const useRegisterPharmacy = () => {
     const [loading, setLoading] = useState(false);
@@ -12,6 +12,7 @@ export const useRegisterPharmacy = () => {
         setError(null);
         try {
             const response = await registerPharmacyService.register(credentials);
+            LocalStorage(response)
             return response;
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erreur de connexion');

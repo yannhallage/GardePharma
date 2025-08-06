@@ -18,6 +18,7 @@ import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
 import { useCreateGarde } from '@/hooks/useCreerGarde';
+import { removeSession } from '@/helpers/local-storage';
 
 const pharmacyName = 'Pharmacie du Soleil';
 
@@ -279,7 +280,11 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
               Signaler une garde
             </Button>
             <span className="text-sm text-neutral-600">{pharmacyName}</span>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm"
+              onClick={() => {
+                removeSession()
+              }}
+            >
               <LogOut className="h-4 w-4 mr-2" />
               Déconnexion
             </Button>

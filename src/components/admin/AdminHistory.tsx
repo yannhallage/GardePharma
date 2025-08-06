@@ -1,4 +1,6 @@
+import { getSession } from '@/helpers/local-storage';
 import { useAdminHistory } from '@/hooks/useAdminHistory';
+// import { useState } from 'react';
 
 // const mockAdminHistory = [
 //   { reference: 'REF-001', date: '2024-05-10', action: 'Ajout', user: 'Admin1', responsible: 'Admin2', details: 'Pharmacie du Centre' },
@@ -7,10 +9,10 @@ import { useAdminHistory } from '@/hooks/useAdminHistory';
 // ];
 
 export default function AdminHistory() {
-  const { history, loading } = useAdminHistory();
+  const { history, loading } = useAdminHistory(getSession()?.userId ?? undefined);
   if (loading) return <div className="text-center text-gray-500">Chargement...</div>;
   return (
-    <div className="bg-white rounded shadow p-6 max-w-2xl mx-auto">
+    <div className="bg-white rounded shadow p-6  mx-auto">
       <div className="text-gray-800 font-bold mb-4 text-base">Historiques</div>
 
       {history.length === 0 ? (
@@ -43,7 +45,7 @@ export default function AdminHistory() {
                   </span>
                 </td>
                 <td className="px-4 py-2 text-gray-800">{row.user}</td>
-                <td className="px-4 py-2 text-gray-800">{row.responsible}</td>
+                <td className="px-4 py-2 text-gray-800">{row.responsable}</td>
                 <td className="px-4 py-2 text-gray-700">
                   {row.details || <span className="text-neutral-400">—</span>}
                 </td>
