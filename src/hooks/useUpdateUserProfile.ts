@@ -8,11 +8,11 @@ export function useUpdateUserProfile() {
     const [loadings, setLoadings] = useState(false);
     const [errors, setErrors] = useState<string | null>(null);
 
-    const update = async (payload: UpdateUserProfilePayload) => {
+    const update = async (payload: UpdateUserProfilePayload, userId: string) => {
         setLoadings(true);
         setErrors(null);
         try {
-            await updateUserProfileService(payload);
+            await updateUserProfileService(payload, userId);
         } catch (err: any) {
             setErrors(err.message || 'Erreur inconnue');
         } finally {

@@ -2,23 +2,28 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useUpdateUserProfile } from '../../hooks/useUpdateUserProfile';
+import { getSession } from '@/helpers/local-storage';
 
 interface ProfileFormProps {
   initialData?: {
     nom: string;
     prenom: string;
     email: string;
+    numero: string;
     avatar_url?: string;
   };
 }
 
 export default function ProfileForm({ initialData }: ProfileFormProps) {
+  const session = getSession();
+  // const sessionUserId = session?.userId
+
   const [formData, setFormData] = useState({
-    nom: initialData?.nom || '',
-    prenom: initialData?.prenom || '',
-    email: initialData?.email || '',
-    numero: '',
-    motdepasse: '',
+    nom: session?.userNom || '',
+    prenom: session?.userPrenom || '',
+    email: session?.userEmail || '',
+    numero: session?.userNumero || '',
+    motdepasse: 'motdepasse',
   });
 
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -63,14 +68,17 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     setLoading(true);
     try {
       await update({
-        identification: formData.email,
+        // identification: formData.email,
         nom: formData.nom,
         prenom: formData.prenom,
         email: formData.email,
         numero: formData.numero,
-        motdepasse: formData.motdepasse,
-        avatar,
-      });
+        // motdepasse: formData.motdepasse,
+        // avatar,
+      },
+        // session?.userId ?? undefined
+        session?.userId ?? ''
+      );
       toast.success('Profil mis à jour !');
     } catch (err) {
       toast.error('Échec de la mise à jour.');

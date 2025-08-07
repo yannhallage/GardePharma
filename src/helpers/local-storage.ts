@@ -23,6 +23,7 @@ export const LocalStorage = (response: AuthentificationResponse | AuthAdminRespo
         authToken: response.token,
         userEmail: response.user.email,
         userType: response.user.userType,
+        userNumero: response.user.numero,
         userId: response.user.id,
         userNom: response.user.nom,
         userPrenom: response.user.prenom,
@@ -35,6 +36,7 @@ export const getSession = () => {
     const userType = localStorage.getItem('userType');
     const userId = localStorage.getItem('userId');
     const userNom = localStorage.getItem('userNom');
+    const userNumero = localStorage.getItem('userNumero');
     const userPrenom = localStorage.getItem('userPrenom');
 
     if (!token || !userEmail || !userType) return null;
@@ -46,5 +48,6 @@ export const getSession = () => {
         userId,
         userNom,
         userPrenom,
+        userNumero
     };
 };
