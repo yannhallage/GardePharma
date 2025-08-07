@@ -1,7 +1,7 @@
 
 
 export interface AddPharmacyUserPayload {
-    identification: string;
+    // identification: string;
     nom_pharmacie: string;
     email?: string;
     chef_pharmacie: string;
