@@ -43,10 +43,9 @@ const LoginPage: React.FC = () => {
     } else {
       try {
         const response = await login({ userType, email, password });
-
-        console.log(response)
+        // console.log(response)
         toast.success('Connexion réussie');
-        navigate('/pharmacy');
+        navigate('/pharmacy/');
 
       } catch (error: any) {
         console.error('Erreur de connexion', error);

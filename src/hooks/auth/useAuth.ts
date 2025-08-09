@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Authentification, AuthentificationResponse } from '@/types/auth/authentification.type';
 import type { AuthAdmin, AuthAdminResponse } from '@/types/auth/authAdmin.types'
 import { authService } from '@/services/auth/authService';
-import { LocalStorage } from '@/helpers/local-storage';
+import { LocalStorage, LoginPharmacy } from '@/helpers/local-storage';
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -13,7 +13,8 @@ export const useAuth = () => {
         setError(null);
         try {
             const response = await authService.login(credentials);
-            LocalStorage(response)
+            console.log(response)
+            LoginPharmacy(response)
             return response;
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erreur de connexion');

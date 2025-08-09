@@ -5,21 +5,16 @@ import type { PharmacyRegisterResponse } from '../types/register/pharmacy-regist
 
 
 export const setSession = (data: Record<string, unknown>) => {
-    const currentUserId = localStorage.getItem('userId');
-
     Object.entries(data).forEach(([key, value]) => {
-        // Ne garder que les clés 'user...' + 'authToken'
         if (!key.startsWith('user') && key !== 'authToken') {
             return;
-        }
-        if (key === 'userId' && currentUserId !== null) {
-            return; // ne pas écraser userId si existant
         }
         if (value !== undefined && value !== null) {
             localStorage.setItem(key, String(value));
         }
     });
 };
+
 
 
 
@@ -31,8 +26,7 @@ export const removeSession = () => {
 
 
 export const LocalStorage = (response: AuthentificationResponse | AuthAdminResponse | PharmacyRegisterResponse) => {
-    console.log('session crée')
-    return setSession({
+    setSession({
         authToken: response.token,
         userEmail: response.user.email,
         userType: response.user.userType,
@@ -41,7 +35,35 @@ export const LocalStorage = (response: AuthentificationResponse | AuthAdminRespo
         userNom: response.user.nom,
         userPrenom: response.user.prenom,
     })
+    return console.log('Session enregistrée avec succès');
 }
+export const LocalStorageInscriptionPharmacie = (response: PharmacyRegisterResponse) => {
+    console.log('session crée', response);
+    // localStorage.setItem('authToken', response.token);
+    setSession({
+        authToken: response.token,
+        userEmail: response.user.email,
+        userType: response.user.userType, // sécurité sur userType ou role
+        userNumero: response.user.numero,
+        userId: response.user.id,
+        userNom: response.user.nom_pharmacie,
+        userPrenom: response.user.chef_pharmacie,
+    });
+    return console.log('Session enregistrée avec succès');
+}
+export const LoginPharmacy = (response: AuthentificationResponse) => {
+    setSession({
+        authToken: response.token,
+        userEmail: response.user.email,
+        userType: response.user.userType, // sécurité sur userType ou role
+        userNumero: response.user.numero,
+        userId: response.user.identification,
+        userNom: response.user.nom_pharmacie,
+        userPrenom: response.user.chef_pharmacie,
+    });
+    return console.log('Session enregistrée avec succès');
+}
+
 
 export const getSession = () => {
     const token = localStorage.getItem('authToken');
