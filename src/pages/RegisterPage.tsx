@@ -26,6 +26,7 @@ interface FormData {
   email: string;
   numero: string;
   commune: string;
+  lieu: string;
   details: string;
   password: string;
   confirmPassword?: string;
@@ -38,6 +39,7 @@ const RegisterPage: React.FC = () => {
     email: '',
     numero: '',
     commune: '',
+    lieu: '',
     details: '',
     password: '',
     confirmPassword: ''
@@ -84,6 +86,9 @@ const RegisterPage: React.FC = () => {
 
     if (!formData.commune.trim()) {
       newErrors.commune = 'L\'adresse est requise';
+    }
+    if (!formData.lieu.trim()) {
+      newErrors.lieu = 'L\'adresse est requise';
     }
     if (!formData.details.trim()) {
       newErrors.details = 'La description est requise';
@@ -137,7 +142,9 @@ const RegisterPage: React.FC = () => {
         email: formData.email,
         numero: formData.numero,
         commune: formData.commune,
+        lieu: formData.lieu,
         details: formData.details,
+        userType:'pharmacy',
         password: formData.password,
       });
 
@@ -165,6 +172,7 @@ const RegisterPage: React.FC = () => {
       email: '',
       numero: '',
       commune: '',
+      lieu: '',
       details: '',
       password: '',
       confirmPassword: ''
@@ -352,6 +360,29 @@ const RegisterPage: React.FC = () => {
                     <div className="space-y-1 md:col-span-2">
                       <label htmlFor="commune" className="block text-xs font-semibold text-neutral-700">
                         Lieu
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
+                        <input
+                          id="commune"
+                          type="text"
+                          value={formData.lieu}
+                          onChange={(e) => handleInputChange('lieu', e.target.value)}
+                          className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200 bg-white/50 text-sm ${errors.lieu ? 'border-red-500' : 'border-neutral-300'
+                            }`}
+                          placeholder="123 Rue de la Paix, 75001 Paris"
+                        />
+                      </div>
+                      {errors.lieu && (
+                        <p className="text-red-500 text-xs flex items-center">
+                          <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                          {errors.lieu}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <label htmlFor="commune" className="block text-xs font-semibold text-neutral-700">
+                        Commune
                       </label>
                       <div className="relative">
                         <MapPin className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />

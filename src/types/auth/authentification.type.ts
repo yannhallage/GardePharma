@@ -9,6 +9,7 @@ export interface AuthentificationResponse {
     token: string;
     user: {
         id: string;
+        // identification: string;
         nom_pharmacie: string;
         chef_pharmacie:string;
         commune:string;

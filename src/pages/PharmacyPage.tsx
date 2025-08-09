@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -258,63 +259,71 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
   );
 };
 
-const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; onReport: () => void; children: React.ReactNode }> = ({ tab, setTab, onReport, children }) => (
-  <div className="min-h-screen bg-neutral-50">
-    {/* Header */}
-    <header className="bg-white shadow-sm border-b border-neutral-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-primary-600">GardePharma</h1>
+const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; onReport: () => void; children: React.ReactNode }> = ({ tab, setTab, onReport, children }) => {
+  // const [dateGarde, setDateGarde] = useState('');
+  // const [type, setType] = useState('');
+  // const [comment, setComment] = useState('');
+  // const [openReportModal, setOpenReportModal] = useState(false);
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-neutral-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <h1 className="text-2xl font-bold text-primary-600">GardePharma</h1>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={onReport}
+              >
+                <PlusCircle className="h-4 w-4" />
+                Signaler une garde
+              </Button>
+              <span className="text-sm text-neutral-600">{pharmacyName}</span>
+              <Button variant="outline" size="sm"
+                onClick={() => {
+                  removeSession()
+                  navigate("/login")
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Déconnexion
+              </Button>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={onReport}
-            >
-              <PlusCircle className="h-4 w-4" />
-              Signaler une garde
-            </Button>
-            <span className="text-sm text-neutral-600">{pharmacyName}</span>
-            <Button variant="outline" size="sm"
-              onClick={() => {
-                removeSession()
-              }}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Déconnexion
-            </Button>
+        </div>
+      </header>
+      {/* Navigation */}
+      <nav className="bg-white border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            {navItems.map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setTab(item.key)}
+                className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-primary-600 border-primary-600' : 'text-neutral-600 border-transparent hover:text-primary-600 hover:border-primary-600'}`}
+              >
+                <item.icon className="h-4 w-4 mr-2" />
+                {item.label}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
-    </header>
-    {/* Navigation */}
-    <nav className="bg-white border-b border-neutral-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex space-x-8">
-          {navItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setTab(item.key)}
-              className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-primary-600 border-primary-600' : 'text-neutral-600 border-transparent hover:text-primary-600 hover:border-primary-600'}`}
-            >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </nav>
-    {/* Main Content */}
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {children}
-    </main>
-  </div>
-);
+      </nav>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 const PharmacyPage: React.FC = () => {
   const [tab, setTab] = useState('Accueil');

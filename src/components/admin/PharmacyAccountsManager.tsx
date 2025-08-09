@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAddPharmacyUser } from '../../hooks/useAddPharmacyUser';
 
 import toast from 'react-hot-toast';
+import { getSession } from '@/helpers/local-storage';
 
 const COMMUNES_CI = [
   'Abobo', 'Adjamé', 'Anyama', 'Attécoubé', 'Bingerville', 'Cocody', 'Koumassi', 'Marcory', 'Plateau', 'Port-Bouët', 'Treichville', 'Yopougon',
@@ -10,7 +11,7 @@ const COMMUNES_CI = [
 
 export default function PharmacyAccountsManager() {
   const [formData, setFormData] = useState({
-    identification: '',
+    // identification: '',
     nom_pharmacie: '',
     email: '',
     chef_pharmacie: '',
@@ -19,7 +20,7 @@ export default function PharmacyAccountsManager() {
   });
 
   const [errors, setErrors] = useState({
-    identification: '',
+    // identification: '',
     nom_pharmacie: '',
     email: '',
     chef_pharmacie: '',
@@ -37,7 +38,7 @@ export default function PharmacyAccountsManager() {
 
   const validate = () => {
     const newErrors = {
-      identification: !formData.identification ? 'L\'identifiant est requis' : '',
+      // identification: !formData.identification ? 'L\'identifiant est requis' : '',
       nom_pharmacie: !formData.nom_pharmacie ? 'Le nom est requis' : '',
       email: !formData.email ? 'L\'email est requis' : '',
       chef_pharmacie: !formData.chef_pharmacie ? 'Le chef pharmacie est requis' : '',
@@ -51,18 +52,20 @@ export default function PharmacyAccountsManager() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
+    const session = getSession()?.userId ?? undefined;
+    if (!session) return console.log('Session non valide. Veuillez vous connecter.');
 
     try {
-      await add(formData);
-      toast.success("Pharmacie ajoutée avec succès !");
+      await add(formData, session);
       setFormData({
-        identification: '',
+        // identification: '',
         nom_pharmacie: '',
         email: '',
         chef_pharmacie: '',
         commune: '',
         numero: ''
       });
+      toast.success("Pharmacie ajoutée avec succès !");
     } catch (error) {
       toast.error("Erreur lors de l'ajout de la pharmacie.");
     }
@@ -76,8 +79,9 @@ export default function PharmacyAccountsManager() {
         noValidate
       >
         <h2 className="text-base font-semibold mb-8">Ajouter une pharmacie</h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {['identification', 'nom_pharmacie', 'email', 'chef_pharmacie', 'numero'].map((field) => (
+          {['nom_pharmacie', 'email', 'chef_pharmacie', 'numero'].map((field) => (
             <div key={field}>
               <label htmlFor={field} className="block text-sm font-medium mb-1">
                 {field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -90,12 +94,18 @@ export default function PharmacyAccountsManager() {
                 className={`w-full px-5 py-3 rounded-lg border ${errors[field as keyof typeof errors] ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
                 placeholder={field.replace('_', ' ')}
               />
-              {errors[field as keyof typeof errors] && <div className="text-red-500 text-xs mt-1">{errors[field as keyof typeof errors]}</div>}
+              {errors[field as keyof typeof errors] && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors[field as keyof typeof errors]}
+                </div>
+              )}
             </div>
           ))}
 
           <div>
-            <label htmlFor="commune" className="block text-sm font-medium mb-1">Commune</label>
+            <label htmlFor="commune" className="block text-sm font-medium mb-1">
+              Commune
+            </label>
             <select
               id="commune"
               name="commune"
@@ -104,11 +114,15 @@ export default function PharmacyAccountsManager() {
               className={`w-full px-5 py-3 rounded-lg border ${errors.commune ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             >
               <option value="">Sélectionner la commune</option>
-              {COMMUNES_CI.map((commune) => (
-                <option key={commune} value={commune}>{commune}</option>
+              {[...new Set(COMMUNES_CI)].map((commune) => (
+                <option key={commune} value={commune}>
+                  {commune}
+                </option>
               ))}
             </select>
-            {errors.commune && <div className="text-red-500 text-xs mt-1">{errors.commune}</div>}
+            {errors.commune && (
+              <div className="text-red-500 text-xs mt-1">{errors.commune}</div>
+            )}
           </div>
         </div>
 
@@ -123,5 +137,6 @@ export default function PharmacyAccountsManager() {
         </div>
       </form>
     </div>
+
   );
 }
