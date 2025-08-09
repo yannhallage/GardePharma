@@ -1,8 +1,7 @@
-
-
 import { useState } from 'react';
 import type { UpdateUserProfilePayload } from '../types/user-profile.type';
 import { updateUserProfileService } from '../services/admin-user-profileService';
+import { setSession } from '@/helpers/local-storage';
 
 export function useUpdateUserProfile() {
     const [loadings, setLoadings] = useState(false);
@@ -13,6 +12,9 @@ export function useUpdateUserProfile() {
         setErrors(null);
         try {
             await updateUserProfileService(payload, userId);
+            setSession
+            // Cast double pour satisfaire TS
+            setSession(payload as unknown as Record<string, unknown>);
         } catch (err: any) {
             setErrors(err.message || 'Erreur inconnue');
         } finally {
@@ -22,3 +24,4 @@ export function useUpdateUserProfile() {
 
     return { update, loadings, errors };
 }
+

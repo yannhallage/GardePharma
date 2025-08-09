@@ -11,15 +11,29 @@ export interface Garde {
   commentaire: string;
 }
 
+// export interface AttributCreerGarde {
+//   // reference: string;
+//   id?: string;
+//   date: string;
+//   type: 'Jour' | 'Nuit' | 'Week-end' | 'Férié';
+//   nom_pharmacie: string;
+//   responsable?: string;
+//   commune: string;
+//   statut: 'En attente' | 'Validée' | 'Rejetée';
+//   commentaire?: string;
+// }
+
 export interface AttributCreerGarde {
-  // reference: string;
-  id: string;
+  // id?: string;
+  reference: string;
   date: string;
-  type: 'Jour' | 'Nuit' | 'Week-end' | 'Férié';
+  type: string;           // ex: 'Jour' | 'Nuit' | 'Week-end' | 'Férié'
   nom_pharmacie: string;
   responsable: string;
   commune: string;
-  statut: 'En attente' | 'Validée' | 'Rejetée';
+  identification_pharma: string,
+  // userId: string;
+  statut: string;         // ex: 'En attente'
   commentaire?: string;
 }
 

@@ -26,11 +26,14 @@ const LoginPage: React.FC = () => {
     console.log(userType)
 
     if (userType == 'admin') {
+      console.log('admin auth', { userType, email, password })
       try {
         const response = await loginAdmin({ userType, email, password });
-        console.log(response)
-        toast.success('Connexion réussie');
-        navigate('/administrateur');
+
+        if (response) {
+          toast.success('Connexion réussie');
+          navigate('/administrateur');
+        }
       } catch (error: any) {
         console.error('Erreur de connexion', error);
         toast.error('Échec de la connexion. Veuillez vérifier vos identifiants.');

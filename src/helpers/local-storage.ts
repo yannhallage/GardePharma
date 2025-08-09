@@ -4,11 +4,24 @@ import type { AuthAdminResponse } from '../types/auth/authAdmin.types';
 import type { PharmacyRegisterResponse } from '../types/register/pharmacy-register';
 
 
-export const setSession = (data: Record<string, string>) => {
+export const setSession = (data: Record<string, unknown>) => {
+    const currentUserId = localStorage.getItem('userId');
+
     Object.entries(data).forEach(([key, value]) => {
-        localStorage.setItem(key, value);
+        // Ne garder que les clés 'user...' + 'authToken'
+        if (!key.startsWith('user') && key !== 'authToken') {
+            return;
+        }
+        if (key === 'userId' && currentUserId !== null) {
+            return; // ne pas écraser userId si existant
+        }
+        if (value !== undefined && value !== null) {
+            localStorage.setItem(key, String(value));
+        }
     });
 };
+
+
 
 
 export const removeSession = () => {
