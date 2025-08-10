@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useUpdateUserProfile } from '../../hooks/useUpdateUserProfile';
+
 import { getSession, updateSessionValue } from '@/helpers/local-storage';
+
 
 interface ProfileFormProps {
   initialData?: {
@@ -10,8 +12,6 @@ interface ProfileFormProps {
     prenom: string;
     email: string;
     numero: string;
-    // avatar_url?: string;
-  };
 }
 
 export default function ProfileForm({ initialData }: ProfileFormProps) {
