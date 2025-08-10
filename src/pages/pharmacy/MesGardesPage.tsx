@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { useGardes } from '@/hooks/useGardes';
+import { getSession } from '@/helpers/local-storage';
 
 // const GARDE_DATA = [
 //   {
@@ -42,7 +43,7 @@ import { useGardes } from '@/hooks/useGardes';
 // ];
 
 const MesGardesPage = () => {
-  const { gardes, loading, error } = useGardes();
+  const { gardes, loading, error } = useGardes(getSession()?.userId ?? '' , 'pharmacy');
 
   return (
     <Card className="border border-gray-200 bg-white shadow-sm">
@@ -54,7 +55,7 @@ const MesGardesPage = () => {
         {error && <p className="text-sm text-red-500">Erreur : {error}</p>}
 
         {!loading && !error && (
-          <table className="w-full text-[15px] rounded-2xl overflow-hidden shadow border border-gray-200">
+          <table className="min-w-full rounded-2xl overflow-hidden shadow border border-gray-200 text-sm">
             <thead>
               <tr className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
                 <th className="py-3 px-2 rounded-tl-lg">Pharmacie</th>
@@ -66,25 +67,31 @@ const MesGardesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {gardes.map((garde) => (
-                <tr
-                  key={garde.id}
-                  className="border-b last:border-0 transition-colors hover:bg-gray-100 group"
-                >
-                  <td className="py-3 px-2 font-semibold text-gray-900 whitespace-nowrap">{garde.pharmacie}</td>
-                  <td className="px-2 text-gray-700 whitespace-nowrap">{garde.titulaire}</td>
-                  <td className="px-2 text-gray-700 whitespace-nowrap">{garde.date}</td>
-                  <td className="px-2 text-gray-700 whitespace-nowrap">{garde.type}</td>
-                  <td className="px-2">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${garde.statutColor} shadow-sm`}>
-                      {garde.statut}
-                    </span>
-                  </td>
-                  <td className="px-2 italic text-gray-500">
-                    {garde.commentaire ? garde.commentaire : <span className="opacity-40">—</span>}
-                  </td>
-                </tr>
-              ))}
+              {
+                gardes.length > 0 ? (
+                  gardes.map((garde, index) => (
+                    <tr key={index} className="border-b last:border-0 hover:bg-gray-100 transition group">
+                      <td className="px-4 py-3 font-medium text-gray-900">{garde.nom_pharmacie}</td>
+                      <td className="px-4 py-3 text-gray-700">{garde.responsable}</td>
+                      <td className="px-4 py-3 text-gray-600">{garde.date}</td>
+                      <td className="px-4 py-3 text-gray-600">{garde.type}</td>
+                      <td className="px-4 py-3 text-gray-600">
+                        <span
+                          className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${garde.statut === 'En cours' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}
+                        >
+                          {garde.statut}
+                        </span>
+                      </td>
+                      <td className="px-2">{garde.commentaire}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="text-center py-4">
+                      Aucune garde en cours.
+                    </td>
+                  </tr>)
+              }
             </tbody>
           </table>
         )}

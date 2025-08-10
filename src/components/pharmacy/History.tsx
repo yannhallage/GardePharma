@@ -1,5 +1,7 @@
 import React from 'react';
 import { useHistorique } from '@/hooks/useHistoriques';
+import { getSession } from '@/helpers/local-storage';
+
 // const mockHistory = [
 //   { reference: 'PH-001', date: '2024-05-01', type: 'Jour', nom_pharmacie: 'Pharmacie du Centre', responsable: 'Dr. Martin', commune: 'Paris', statut: 'Effectuée', commentaire: 'RAS' },
 //   { reference: 'PH-002', date: '2024-04-15', type: 'Nuit', nom_pharmacie: 'Pharmacie Saint-Michel', responsable: 'Dr. Dupuis', commune: 'Paris', statut: 'Signalée', commentaire: 'Indisponibilité' },
@@ -17,7 +19,7 @@ function statusBadge(statut: string) {
 }
 
 export default function History() {
-  const { data: historique, loading, error } = useHistorique();
+  const { data: historique, loading, error } = useHistorique(getSession()?.userId ?? '');
 
   return (
     <div className="bg-white rounded shadow p-6 max-w-5xl mx-auto">
@@ -41,18 +43,28 @@ export default function History() {
             </tr>
           </thead>
           <tbody>
-            {historique.map((row, i) => (
-              <tr key={i} className="border-t hover:bg-gray-100 transition">
-                <td className="px-4 py-2 font-semibold text-gray-900">{row.reference}</td>
-                <td className="px-4 py-2 font-medium text-gray-900">{row.date}</td>
-                <td className="px-4 py-2 text-gray-800">{row.type}</td>
-                <td className="px-4 py-2 text-gray-800">{row.nom_pharmacie}</td>
-                <td className="px-4 py-2 text-gray-800">{row.responsable}</td>
-                <td className="px-4 py-2 text-gray-800">{row.commune}</td>
-                <td className="px-4 py-2">{statusBadge(row.statut)}</td>
-                <td className="px-4 py-2 text-gray-700 italic">{row.commentaire || <span className="text-neutral-400">—</span>}</td>
-              </tr>
-            ))}
+            {
+              historique.length > 0 ? (
+                historique.map((item) => (
+                  <tr key={item.reference}>
+                    <td className="px-4 py-2">{item.reference}</td>
+                    <td className="px-4 py-2">{item.date}</td>
+                    <td className="px-4 py-2">{item.type}</td>
+                    <td className="px-4 py-2">{item.nom_pharmacie}</td>
+                    <td className="px-4 py-2">{item.responsable}</td>
+                    <td className="px-4 py-2">{item.commune}</td>
+                    <td className="px-4 py-2">{statusBadge(item.statut)}</td>
+                    <td className="px-4 py-2">{item.commentaire}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="px-4 py-2 text-center text-gray-500">
+                    Aucune information disponible
+                  </td>
+                </tr>
+              )
+            }
           </tbody>
         </table>
       )}

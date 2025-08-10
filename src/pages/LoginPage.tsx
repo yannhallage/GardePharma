@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
     } else {
       try {
         const response = await login({ userType, email, password });
-        // console.log(response)
+        
         toast.success('Connexion réussie');
         navigate('/pharmacy/');
 

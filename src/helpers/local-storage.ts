@@ -16,6 +16,18 @@ export const setSession = (data: Record<string, unknown>) => {
 };
 
 
+export const updateSessionValue = (key: string, value: string) => {
+    if (!key) {
+        console.warn('Clé invalide pour updateSessionValue');
+        return;
+    }
+    try {
+        localStorage.setItem(key, value);
+        console.log(`Clé "${key}" mise à jour avec la valeur "${value}"`);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du localStorage :', error);
+    }
+};
 
 
 

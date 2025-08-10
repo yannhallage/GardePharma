@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useUpdateUserProfile } from '../../hooks/useUpdateUserProfile';
-import { getSession } from '@/helpers/local-storage';
+import { getSession, updateSessionValue } from '@/helpers/local-storage';
 
 interface ProfileFormProps {
   initialData?: {
@@ -68,6 +68,10 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     setLoading(true);
 
     try {
+      updateSessionValue('userNom', formData.nom);
+      updateSessionValue('userPrenom', formData.prenom);
+      updateSessionValue('userEmail', formData.email);
+      updateSessionValue('userNumero', formData.numero);
       await update({
         nom: formData.nom,
         prenom: formData.prenom,

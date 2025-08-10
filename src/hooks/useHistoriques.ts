@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { HistoriquePharmacyService } from '@/services/historiquePharmacyServices';
 import type { Historique_Pharmacy } from '@/types/historiques';
 
-export const useHistorique = () => {
+export const useHistorique = (userID : string) => {
     const [data, setData] = useState<Historique_Pharmacy[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -10,7 +10,7 @@ export const useHistorique = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await HistoriquePharmacyService.getHistorique();
+                const res = await HistoriquePharmacyService.getHistorique(userID);
                 setData(res);
             } catch (err: any) {
                 setError(err.message || 'Erreur inconnue');
