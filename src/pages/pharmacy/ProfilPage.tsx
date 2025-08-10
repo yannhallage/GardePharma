@@ -3,17 +3,20 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { getSession, updateSessionValue } from '@/helpers/local-storage';
+import { useUpdateUserProfilePharmacy } from '@/hooks/useUpdateProfilPharmacy';
 import toast from 'react-hot-toast';
 
 const ProfilPage = () => {
   const session = getSession();
+  const { updateProfilePharmacy } = useUpdateUserProfilePharmacy();
 
+  const [textChange, setTextChange] = useState("Save changements")
   const [formData, setFormData] = useState({
-    nom: session?.userNom || '',
-    prenom: session?.userPrenom || '',
+    nom_pharmacie: session?.userNom || '',
+    chef_pharmacie: session?.userPrenom || '',
     email: session?.userEmail || '',
     numero: session?.userNumero || '',
-    motdepasse: 'motdepasse',
+    password: 'motdepasse',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,12 +30,19 @@ const ProfilPage = () => {
   const handleSubmit = () => {
     try {
       // Mise à jour du localStorage
-      updateSessionValue('userNom', formData.nom);
-      updateSessionValue('userPrenom', formData.prenom);
+      updateSessionValue('userNom', formData.nom_pharmacie);
+      updateSessionValue('userPrenom', formData.chef_pharmacie);
       updateSessionValue('userEmail', formData.email);
       updateSessionValue('userNumero', formData.numero);
 
-      toast.success('Profil mis à jour avec succès');
+      // Appel de la fonction de mise à jour du profil
+      updateProfilePharmacy(formData, session?.userId || '');
+
+      setTextChange('Save changements..')
+      setTimeout(() => {
+        setTextChange('Save changements')
+        toast.success('Profil mis à jour avec succès');
+      }, 700)
     } catch (error) {
       toast.error('Erreur lors de la mise à jour');
     }
@@ -67,7 +77,7 @@ const ProfilPage = () => {
               <Input
                 type="text"
                 name="nom"
-                value={formData.nom}
+                value={formData.nom_pharmacie}
                 onChange={handleChange}
                 placeholder="Nom de la pharmacie"
               />
@@ -77,7 +87,7 @@ const ProfilPage = () => {
               <Input
                 type="text"
                 name="prenom"
-                value={formData.prenom}
+                value={formData.chef_pharmacie}
                 onChange={handleChange}
                 placeholder="Nom du responsable"
               />
@@ -90,7 +100,7 @@ const ProfilPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
             <div>
               <Label>Email</Label>
-              <Input type="email" name="email" value={formData.email} readOnly className="bg-neutral-100" />
+              <Input type="email" name="email" value={formData.email} className="bg-neutral-100" />
             </div>
             <div className="items-end h-full hidden">
               <Button
@@ -102,11 +112,11 @@ const ProfilPage = () => {
             </div>
             <div>
               <Label>Mot de passe</Label>
-              <Input type="password" value={formData.motdepasse} readOnly className="bg-neutral-100" />
+              <Input type="password" value={formData.password} className="bg-neutral-100" />
             </div>
             <div>
               <Label>Numéro de téléphone</Label>
-              <Input type="text" name="numero" value={formData.numero} readOnly className="bg-neutral-100" />
+              <Input type="text" name="numero" value={formData.numero} className="bg-neutral-100" />
             </div>
             <div className="flex items-end h-full">
               <Button
@@ -114,11 +124,15 @@ const ProfilPage = () => {
                 className="bg-neutral-100 text-neutral-700 hover:bg-neutral-200 px-3 py-1 text-sm"
                 onClick={handleSubmit}
               >
-                Save changements
+                {
+                  textChange
+                }
               </Button>
             </div>
           </div>
         </div>
+
+
         <h3 className="text-lg font-semibold mb-4">Support Access</h3>
         <div className="flex items-center gap-4 mb-4">
           <span>Support access</span>
