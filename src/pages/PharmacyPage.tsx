@@ -23,7 +23,7 @@ import { removeSession } from '@/helpers/local-storage';
 import { getSession } from '@/helpers/local-storage';
 
 
-const pharmacyName = getSession()?.userNom;
+// const pharmacyName = getSession()?.userNom;
 
 interface ReportModalProps {
   open: boolean;
@@ -86,58 +86,61 @@ const QuickStats = () => (
   </div>
 );
 
-const AccueilPage = () => (
-  <div className="flex flex-col gap-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Bonjour, {pharmacyName}. Voici un résumé de vos prochaines gardes.</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <QuickStats />
-      </CardContent>
-    </Card>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Gardes à venir</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-600">
-                <th className="py-2">Date</th>
-                <th>Type</th>
-                <th>État</th>
-                <th>Observations</th>
-              </tr>
-            </thead>
-            <tbody>
-              {GARDE_EVENTS_FC.map((garde, i) => (
-                <tr key={i} className="border-b last:border-0">
-                  <td className="py-2">{garde.start}</td>
-                  <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
-                  <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
-                  <td>-</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="text-sm text-gray-700 space-y-2">
-            <li>Pharmacie du Centre</li>
-            <li>Pharmacie de la Gare</li>
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
-  </div>
-);
+// const AccueilPage = () => {
+//   const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
+//   return (
+//     <div className="flex flex-col gap-8">
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>Bonjour, {pharmacyName}. Voici un résumé de vos prochaines gardes.</CardTitle>
+//         </CardHeader>
+//         <CardContent>
+//           <QuickStats />
+//         </CardContent>
+//       </Card>
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//         <Card>
+//           <CardHeader>
+//             <CardTitle>Gardes à venir</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <table className="w-full text-sm">
+//               <thead>
+//                 <tr className="text-left text-gray-600">
+//                   <th className="py-2">Date</th>
+//                   <th>Type</th>
+//                   <th>État</th>
+//                   <th>Observations</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {GARDE_EVENTS_FC.map((garde, i) => (
+//                   <tr key={i} className="border-b last:border-0">
+//                     <td className="py-2">{garde.start}</td>
+//                     <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
+//                     <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
+//                     <td>-</td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </CardContent>
+//         </Card>
+//         <Card>
+//           <CardHeader>
+//             <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <ul className="text-sm text-gray-700 space-y-2">
+//               <li>Pharmacie du Centre</li>
+//               <li>Pharmacie de la Gare</li>
+//             </ul>
+//           </CardContent>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// }
 
 const CustomToolbar = ({ label, onNavigate }) => (
   <div className="flex items-center justify-between px-4 py-2 bg-white border-b rounded-t-lg">
@@ -266,6 +269,7 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
   // const [type, setType] = useState('');
   // const [comment, setComment] = useState('');
   // const [openReportModal, setOpenReportModal] = useState(false);
+  const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-neutral-50">
