@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useUpdateUserProfile } from '../../hooks/useUpdateUserProfile';
-import { getSession } from '@/helpers/local-storage';
+
+import { getSession, updateSessionValue } from '@/helpers/local-storage';
+
 
 interface ProfileFormProps {
   initialData?: {
@@ -10,8 +12,6 @@ interface ProfileFormProps {
     prenom: string;
     email: string;
     numero: string;
-    avatar_url?: string;
-  };
 }
 
 export default function ProfileForm({ initialData }: ProfileFormProps) {
@@ -26,7 +26,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     motdepasse: 'motdepasse',
   });
 
-  const [avatar, setAvatar] = useState<File | null>(null);
+  // const [avatar, setAvatar] = useState<File | null>(null);
   const [errors, setErrors] = useState({
     nom: '',
     prenom: '',
@@ -46,16 +46,16 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setAvatar(file);
+    // setAvatar(file);
   };
 
   const validate = () => {
     const newErrors = {
-      nom: !formData.nom ? 'Le nom est requis' : '',
-      prenom: !formData.prenom ? 'Le prénom est requis' : '',
-      email: !formData.email ? 'L’email est requis' : '',
-      numero: !formData.numero ? 'Le numéro est requis' : '',
-      motdepasse: !formData.motdepasse ? 'Le mot de passe est requis' : '',
+      nom: formData.nom && formData.nom.length < 2 ? 'Le nom doit contenir au moins 2 caractères' : '',
+      prenom: formData.prenom && formData.prenom.length < 2 ? 'Le prénom doit contenir au moins 2 caractères' : '',
+      email: formData.email && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email) ? 'Email invalide' : '',
+      numero: formData.numero && (formData.numero.length < 7 || formData.numero.length > 20) ? 'Numéro invalide' : '',
+      motdepasse: formData.motdepasse && formData.motdepasse.length < 6 ? 'Mot de passe trop court' : '',
     };
     setErrors(newErrors);
     return Object.values(newErrors).every(err => !err);
@@ -66,26 +66,31 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     if (!validate()) return;
 
     setLoading(true);
+
     try {
+      updateSessionValue('userNom', formData.nom);
+      updateSessionValue('userPrenom', formData.prenom);
+      updateSessionValue('userEmail', formData.email);
+      updateSessionValue('userNumero', formData.numero);
       await update({
-        // identification: formData.email,
         nom: formData.nom,
         prenom: formData.prenom,
         email: formData.email,
         numero: formData.numero,
-        // motdepasse: formData.motdepasse,
-        // avatar,
       },
-        // session?.userId ?? undefined
         session?.userId ?? ''
       );
       toast.success('Profil mis à jour !');
-    } catch (err) {
-      toast.error('Échec de la mise à jour.');
+    } catch (err: any) {
+      if (err.response?.data?.errors) {
+
+        err.response.data.errors.forEach((e: any) => toast.error(e.message));
+      } else {
+        toast.error('Échec de la mise à jour.');
+      }
       console.error(err);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
@@ -172,7 +177,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
             <img
-              src={initialData?.avatar_url || "/default-avatar.png"}
+              src={"https://media.designrush.com/inspiration_images/549120/conversions/Pharma_ee5626592827-desktop.jpg"}
               alt="Avatar"
               className="w-16 h-16 rounded-full border-2 border-green-200 object-cover"
             />

@@ -7,12 +7,12 @@ export const useCreateGarde = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    const create = async (data: AttributCreerGarde) => {
+    const create = async (data: AttributCreerGarde, userID: string) => {
         setLoading(true);
         setError(null);
         setSuccess(false);
         try {
-            await GardeService.createGarde(data);
+            await GardeService.createGarde(data, userID);
             setSuccess(true);
         } catch (err: any) {
             setError(err.response?.data?.message || err.message || "Erreur lors de la création");

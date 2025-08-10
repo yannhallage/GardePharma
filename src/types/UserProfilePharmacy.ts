@@ -1,8 +1,9 @@
 
 
 export type UserProfile = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    avatarUrl: string;
+    nom_pharmacie: string,
+    chef_pharmacie: string,
+    email?: string,
+    numero?: string,
+    password?: string,
 };

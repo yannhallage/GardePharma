@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -19,8 +20,10 @@ import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
 import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { removeSession } from '@/helpers/local-storage';
+import { getSession } from '@/helpers/local-storage';
 
-const pharmacyName = 'Pharmacie du Soleil';
+
+// const pharmacyName = getSession()?.userNom;
 
 interface ReportModalProps {
   open: boolean;
@@ -83,58 +86,61 @@ const QuickStats = () => (
   </div>
 );
 
-const AccueilPage = () => (
-  <div className="flex flex-col gap-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Bonjour, {pharmacyName}. Voici un résumé de vos prochaines gardes.</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <QuickStats />
-      </CardContent>
-    </Card>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Gardes à venir</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-600">
-                <th className="py-2">Date</th>
-                <th>Type</th>
-                <th>État</th>
-                <th>Observations</th>
-              </tr>
-            </thead>
-            <tbody>
-              {GARDE_EVENTS_FC.map((garde, i) => (
-                <tr key={i} className="border-b last:border-0">
-                  <td className="py-2">{garde.start}</td>
-                  <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
-                  <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
-                  <td>-</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="text-sm text-gray-700 space-y-2">
-            <li>Pharmacie du Centre</li>
-            <li>Pharmacie de la Gare</li>
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
-  </div>
-);
+// const AccueilPage = () => {
+//   const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
+//   return (
+//     <div className="flex flex-col gap-8">
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>Bonjour, {pharmacyName}. Voici un résumé de vos prochaines gardes.</CardTitle>
+//         </CardHeader>
+//         <CardContent>
+//           <QuickStats />
+//         </CardContent>
+//       </Card>
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//         <Card>
+//           <CardHeader>
+//             <CardTitle>Gardes à venir</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <table className="w-full text-sm">
+//               <thead>
+//                 <tr className="text-left text-gray-600">
+//                   <th className="py-2">Date</th>
+//                   <th>Type</th>
+//                   <th>État</th>
+//                   <th>Observations</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {GARDE_EVENTS_FC.map((garde, i) => (
+//                   <tr key={i} className="border-b last:border-0">
+//                     <td className="py-2">{garde.start}</td>
+//                     <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
+//                     <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
+//                     <td>-</td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </CardContent>
+//         </Card>
+//         <Card>
+//           <CardHeader>
+//             <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <ul className="text-sm text-gray-700 space-y-2">
+//               <li>Pharmacie du Centre</li>
+//               <li>Pharmacie de la Gare</li>
+//             </ul>
+//           </CardContent>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// }
 
 const CustomToolbar = ({ label, onNavigate }) => (
   <div className="flex items-center justify-between px-4 py-2 bg-white border-b rounded-t-lg">
@@ -258,63 +264,72 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
   );
 };
 
-const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; onReport: () => void; children: React.ReactNode }> = ({ tab, setTab, onReport, children }) => (
-  <div className="min-h-screen bg-neutral-50">
-    {/* Header */}
-    <header className="bg-white shadow-sm border-b border-neutral-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-primary-600">GardePharma</h1>
+const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; onReport: () => void; children: React.ReactNode }> = ({ tab, setTab, onReport, children }) => {
+  // const [dateGarde, setDateGarde] = useState('');
+  // const [type, setType] = useState('');
+  // const [comment, setComment] = useState('');
+  // const [openReportModal, setOpenReportModal] = useState(false);
+  const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-neutral-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <h1 className="text-2xl font-bold text-primary-600">GardePharma</h1>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={onReport}
+              >
+                <PlusCircle className="h-4 w-4" />
+                Signaler une garde
+              </Button>
+              <span className="text-sm text-neutral-600">{pharmacyName}</span>
+              <Button variant="outline" size="sm"
+                onClick={() => {
+                  removeSession()
+                  navigate("/login")
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Déconnexion
+              </Button>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={onReport}
-            >
-              <PlusCircle className="h-4 w-4" />
-              Signaler une garde
-            </Button>
-            <span className="text-sm text-neutral-600">{pharmacyName}</span>
-            <Button variant="outline" size="sm"
-              onClick={() => {
-                removeSession()
-              }}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Déconnexion
-            </Button>
+        </div>
+      </header>
+      {/* Navigation */}
+      <nav className="bg-white border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            {navItems.map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setTab(item.key)}
+                className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-primary-600 border-primary-600' : 'text-neutral-600 border-transparent hover:text-primary-600 hover:border-primary-600'}`}
+              >
+                <item.icon className="h-4 w-4 mr-2" />
+                {item.label}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
-    </header>
-    {/* Navigation */}
-    <nav className="bg-white border-b border-neutral-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex space-x-8">
-          {navItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setTab(item.key)}
-              className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-primary-600 border-primary-600' : 'text-neutral-600 border-transparent hover:text-primary-600 hover:border-primary-600'}`}
-            >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </nav>
-    {/* Main Content */}
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {children}
-    </main>
-  </div>
-);
+      </nav>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 const PharmacyPage: React.FC = () => {
   const [tab, setTab] = useState('Accueil');

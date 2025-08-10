@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { motion } from 'framer-motion';
 import { DatePicker } from '../ui/date-picker';
-
-const pharmacies = [
-  { id: '1', name: 'Pharmacie du Centre', commune: 'Abobo' },
-  { id: '2', name: 'Pharmacie Saint-Michel', commune: 'Cocody' },
-];
+import { useGetAllPharmacy } from '@/hooks/useGetAllPharmacy';
+import { getSession } from '@/helpers/local-storage';
+import { v4 as uuidv4 } from 'uuid';
+import toast from 'react-hot-toast';
 
 export default function ManualOnCallAssignment() {
   const [formData, setFormData] = useState({
@@ -14,13 +13,38 @@ export default function ManualOnCallAssignment() {
     holder_name: '',
     date: '',
     type: 'Jour',
-    start_time: '',
-    end_time: '',
     comment: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { create, loading } = useCreateGarde();
+  const { create, loading, error: createError, success } = useCreateGarde();
+  const { data: pharmacies = [], error: pharmaciesError } = useGetAllPharmacy(getSession()?.userId ?? undefined);
+
+  // Lorsqu'on change la pharmacie sélectionnée, on met à jour holder_name avec chef_pharmacie
+  useEffect(() => {
+    if (formData.pharmacy_id) {
+      const selectedPharmacy = pharmacies.find(p => p.identification === formData.pharmacy_id);
+      if (selectedPharmacy) {
+        setFormData(prev => ({ ...prev, holder_name: selectedPharmacy.chef_pharmacie || '' }));
+        setErrors(prev => ({ ...prev, holder_name: '' }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, holder_name: '' }));
+    }
+  }, [formData.pharmacy_id, pharmacies]);
+
+  // Reset formulaire après succès
+  useEffect(() => {
+    if (success) {
+      setFormData({
+        pharmacy_id: '',
+        holder_name: '',
+        date: '',
+        type: 'Jour',
+        comment: '',
+      });
+    }
+  }, [success]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -38,47 +62,67 @@ export default function ManualOnCallAssignment() {
     if (!formData.holder_name) newErrors.holder_name = 'Le nom du titulaire est requis';
     if (!formData.date) newErrors.date = 'La date est requise';
     if (!formData.type) newErrors.type = 'Le type de garde est requis';
-    if (!formData.start_time) newErrors.start_time = 'L’heure de début est requise';
-    if (!formData.end_time) newErrors.end_time = 'L’heure de fin est requise';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const [chargement, setChargement] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const selectedPharmacy = pharmacies.find(p => p.id === formData.pharmacy_id);
+    const selectedPharmacy = pharmacies.find(p => p.identification === formData.pharmacy_id);
     if (!selectedPharmacy) {
       alert("Pharmacie introuvable");
       return;
     }
 
-    try {
-      await create({
-        date: formData.date,
-        type: formData.type as 'Jour' | 'Nuit' | 'Week-end' | 'Férié',
-        nom_pharmacie: selectedPharmacy.name,
-        responsable: formData.holder_name,
-        commune: selectedPharmacy.commune,
-        statut: 'En attente',
-        commentaire: formData.comment,
-      });
+    const userId = getSession()?.userId;
+    if (!userId) {
+      alert("Utilisateur non authentifié");
+      return;
+    }
 
-      alert("Garde attribuée avec succès !");
+    setChargement(true);
+
+    console.log(selectedPharmacy)
+    try {
+      await create(
+        {
+          reference: uuidv4(),
+          date: new Date(`${formData.date}T00:00:00.000Z`).toISOString(),
+          type: formData.type,
+          nom_pharmacie: selectedPharmacy.nom_pharmacie,
+          responsable: `${selectedPharmacy.nom_pharmacie}. ${formData.holder_name}`,
+          commune: selectedPharmacy.commune,
+          userId: selectedPharmacy.id,
+          identification_pharma: selectedPharmacy.identification ?? '',
+          statut: 'en attente',
+          commentaire:
+            formData.comment ||
+            `Garde de ${formData.type.toLowerCase()} attribuée pour la ${selectedPharmacy.nom_pharmacie}.`,
+        },
+        userId
+      );
+
+      toast.success("La garde a été créée avec succès");
+
       setFormData({
         pharmacy_id: '',
         holder_name: '',
         date: '',
         type: 'Jour',
-        start_time: '',
-        end_time: '',
         comment: '',
       });
-    } catch (error) {
-      alert("Erreur lors de l’attribution de la garde.");
+
+    } catch {
+      toast.error('Un problème a été rencontré lors de la création de la garde ❌');
+    } finally {
+      setChargement(false);
     }
   };
+
 
   return (
     <motion.div className="min-h-[400px] flex items-center justify-center bg-gray-50 py-10">
@@ -87,7 +131,21 @@ export default function ManualOnCallAssignment() {
         onSubmit={handleSubmit}
       >
         <h2 className="text-base font-semibold mb-8">Attribuer une garde manuellement</h2>
+
+        {pharmaciesError && (
+          <div className="mb-4 text-red-600 text-sm">Erreur chargement des pharmacies : {pharmaciesError}</div>
+        )}
+
+        {success && (
+          <div className="mb-4 text-green-600 text-sm">Garde attribuée avec succès !</div>
+        )}
+
+        {createError && (
+          <div className="mb-4 text-red-600 text-sm">Erreur : {createError}</div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
           <div>
             <label className="block text-sm font-medium mb-1">Pharmacie</label>
             <select
@@ -98,23 +156,12 @@ export default function ManualOnCallAssignment() {
             >
               <option value="">Sélectionner une pharmacie</option>
               {pharmacies.map(pharma => (
-                <option key={pharma.id} value={pharma.id}>{pharma.name}</option>
+                <option key={pharma.identification} value={pharma.identification}>
+                  {pharma.nom_pharmacie} - Responsable: {pharma.chef_pharmacie}
+                </option>
               ))}
             </select>
             {errors.pharmacy_id && <div className="text-red-500 text-xs mt-1">{errors.pharmacy_id}</div>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Nom du titulaire</label>
-            <input
-              type="text"
-              name="holder_name"
-              value={formData.holder_name}
-              onChange={e => handleInputChange('holder_name', e.target.value)}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.holder_name ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-              placeholder="Nom du titulaire"
-            />
-            {errors.holder_name && <div className="text-red-500 text-xs mt-1">{errors.holder_name}</div>}
           </div>
 
           <div>
@@ -144,27 +191,15 @@ export default function ManualOnCallAssignment() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Heure de début</label>
+            <label className="block text-sm font-medium mb-1">Nom du titulaire</label>
             <input
-              type="time"
-              name="start_time"
-              value={formData.start_time}
-              onChange={e => handleInputChange('start_time', e.target.value)}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.start_time ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
+              type="text"
+              name="holder_name"
+              value={formData.holder_name}
+              onChange={e => handleInputChange('holder_name', e.target.value)}
+              className={`w-full px-5 py-3 rounded-lg border ${errors.holder_name ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
             />
-            {errors.start_time && <div className="text-red-500 text-xs mt-1">{errors.start_time}</div>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Heure de fin</label>
-            <input
-              type="time"
-              name="end_time"
-              value={formData.end_time}
-              onChange={e => handleInputChange('end_time', e.target.value)}
-              className={`w-full px-5 py-3 rounded-lg border ${errors.end_time ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:border-green-500 focus:bg-white transition text-sm`}
-            />
-            {errors.end_time && <div className="text-red-500 text-xs mt-1">{errors.end_time}</div>}
+            {errors.holder_name && <div className="text-red-500 text-xs mt-1">{errors.holder_name}</div>}
           </div>
 
           <div className="md:col-span-2">

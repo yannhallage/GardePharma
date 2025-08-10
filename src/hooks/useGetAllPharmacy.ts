@@ -33,8 +33,9 @@ export function useGetAllPharmacy(userId?: string) {
                     console.warn('Les données ne sont pas un tableau :', dataResponse);
                     return setData([]);
                 }
-
+                console.log('Les données sont un tableau :', dataResponse);
                 const mapped = dataResponse.map((item) => ({
+                    id: item.id,
                     identification: item.identification,
                     nom_pharmacie: item.nom_pharmacie,
                     chef_pharmacie: item.chef_pharmacie,

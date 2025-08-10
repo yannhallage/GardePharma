@@ -20,7 +20,7 @@ function statusLabel(status: string) {
 
 export default function GuardsSection() {
   const [refreshKey, setRefreshKey] = useState(0);
-  const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined);
+  const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined , 'admin');
 
   const handleDelete = async (id: string) => {
     try {
@@ -79,7 +79,7 @@ export default function GuardsSection() {
                 </tr>
               ) : (
                 gardes.map(guard => (
-                  <tr key={guard.id} className="border-b last:border-0 hover:bg-gray-100 transition group">
+                  <tr key={guard._id} className="border-b last:border-0 hover:bg-gray-100 transition group">
                     <td className="px-4 py-3 font-medium text-gray-900">{guard.nom_pharmacie}</td>
                     <td className="px-4 py-3 text-gray-700">{guard.responsable}</td>
                     <td className="px-4 py-3 text-gray-600">{new Date(guard.date).toLocaleDateString()}</td>
@@ -103,14 +103,14 @@ export default function GuardsSection() {
                         >
                           <DropdownMenu.Item
                             className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 gap-2 cursor-pointer"
-                            onSelect={() => handleDelete(guard.id)}
+                            onSelect={() => handleDelete(guard._id)}
                           >
                             <Trash2 className="h-4 w-4 mr-2" /> Supprimer
                           </DropdownMenu.Item>
                           {guard.statut === 'En attente' && (
                             <DropdownMenu.Item
                               className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 gap-2 cursor-pointer"
-                              onSelect={() => handleAccept(guard.id)}
+                              onSelect={() => handleAccept(guard._id)}
                             >
                               <span className="h-4 w-4 mr-2 inline-block">✔️</span> Accepter
                             </DropdownMenu.Item>
