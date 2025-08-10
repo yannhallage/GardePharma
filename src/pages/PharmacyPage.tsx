@@ -20,8 +20,10 @@ import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
 import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { removeSession } from '@/helpers/local-storage';
+import { getSession } from '@/helpers/local-storage';
 
-const pharmacyName = 'Pharmacie du Soleil';
+
+const pharmacyName = getSession()?.userNom;
 
 interface ReportModalProps {
   open: boolean;

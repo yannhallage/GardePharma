@@ -24,16 +24,31 @@ export interface Garde {
 // }
 
 export interface AttributCreerGarde {
-  // id?: string;
-  reference: string;
+  _id: string,
+  reference?: string;               // devient optionnel
+  identification_pharma?: string;   // devient optionnel
   date: string;
-  type: string;           // ex: 'Jour' | 'Nuit' | 'Week-end' | 'Férié'
+  type: string;
+  userId: string,                      // ex: 'Jour' | 'Nuit' | 'Week-end' | 'Férié'
   nom_pharmacie: string;
   responsable: string;
   commune: string;
-  identification_pharma: string,
-  // userId: string;
-  statut: string;         // ex: 'En attente'
+  statut: string;                    // ex: 'En attente'
+  commentaire?: string;
+}
+
+
+export interface GardeFromAPI {
+  _id: string;
+  reference?: string;
+  identification_pharma?: string;
+  date: string;
+  type: string;
+  userId: string;
+  nom_pharmacie: string;
+  responsable: string;
+  commune: string;
+  statut: string;
   commentaire?: string;
 }
 

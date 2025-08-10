@@ -86,6 +86,7 @@ export default function ManualOnCallAssignment() {
 
     setChargement(true);
 
+    console.log(selectedPharmacy)
     try {
       await create(
         {
@@ -95,6 +96,7 @@ export default function ManualOnCallAssignment() {
           nom_pharmacie: selectedPharmacy.nom_pharmacie,
           responsable: `${selectedPharmacy.nom_pharmacie}. ${formData.holder_name}`,
           commune: selectedPharmacy.commune,
+          userId: selectedPharmacy.id,
           identification_pharma: selectedPharmacy.identification ?? '',
           statut: 'en attente',
           commentaire:
