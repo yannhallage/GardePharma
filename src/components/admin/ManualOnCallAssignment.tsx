@@ -98,7 +98,7 @@ export default function ManualOnCallAssignment() {
           commune: selectedPharmacy.commune,
           userId: selectedPharmacy.id,
           identification_pharma: selectedPharmacy.identification ?? '',
-          statut: 'en attente',
+          statut: 'en cours',
           commentaire:
             formData.comment ||
             `Garde de ${formData.type.toLowerCase()} attribuée pour la ${selectedPharmacy.nom_pharmacie}.`,

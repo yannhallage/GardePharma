@@ -1,9 +1,10 @@
 // src/services/gardeService.ts
-import type { AttributCreerGarde,ListGardByAdminResponse } from '../types/garde';
+import type { AttributCreerGarde, ListGardByAdminResponse } from '../types/garde';
+import type { UpdateGardes } from '../types/garde';
 import { GardeAPI } from '../api/garde.api';
 
 export const GardeService = {
-  getAllGardes: async (id:string): Promise<ListGardByAdminResponse> => {
+  getAllGardes: async (id: string): Promise<ListGardByAdminResponse> => {
     return await GardeAPI.getAll(id);
   },
 
@@ -13,6 +14,10 @@ export const GardeService = {
 
   deleteGardeById: async (id: string): Promise<void> => {
     return await GardeAPI.delete(id);
+  },
+
+  updateGardeByPharma: (id: string, data: UpdateGardes) => {
+    return GardeAPI.updateGardeByPharma(id, data);
   },
 
   updateStatutGarde: async (

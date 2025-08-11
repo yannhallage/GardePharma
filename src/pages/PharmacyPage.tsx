@@ -198,7 +198,7 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
       nom_pharmacie: "",
       responsable: "",
       commune: "",
-      statut: "en_attente",
+      statut: "en attente",
       commentaire: comment,
     };
 

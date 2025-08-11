@@ -24,7 +24,7 @@ export interface Garde {
 // }
 
 export interface AttributCreerGarde {
-  _id: string,
+  _id?: string,
   reference?: string;               // devient optionnel
   identification_pharma?: string;   // devient optionnel
   date: string;
@@ -57,3 +57,11 @@ export type ListGardByAdminResponse = {
   message: string;
   data: AttributCreerGarde[];
 };
+
+
+export interface UpdateGardes {
+  id_garde: string,
+  newDate: string,
+  statut: string,
+  comments: string
+}
