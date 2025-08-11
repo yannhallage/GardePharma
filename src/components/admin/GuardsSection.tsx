@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+
 import { MoreVertical, Trash2 } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { toast } from 'react-hot-toast';
@@ -6,6 +13,14 @@ import { useGardes } from '@/hooks/useGardes';
 import { getSession } from '@/helpers/local-storage';
 
 import { GardeService } from '@/services/gardeService';
+
+
+
+
+interface ReportModalProps {
+  open: boolean;
+  onClose: () => void;
+}
 
 function statusLabel(status: string) {
   switch (status) {
@@ -19,25 +34,27 @@ function statusLabel(status: string) {
 }
 
 export default function GuardsSection() {
-  const [refreshKey, setRefreshKey] = useState(0);
-  const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined , 'admin');
+  // const [refreshKey, setRefreshKey] = useState(0);
+  const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined, 'admin');
 
   const handleDelete = async (id: string) => {
-    try {
-      await GardeService.deleteGardeById(id);
-      toast.success('Garde supprimée avec succès.');
-      setRefreshKey(prev => prev + 1);
-    } catch (err) {
-      console.error(err);
-      toast.error('Échec de la suppression.');
-    }
+    console.log('supprimer', id)
+    // ReportModal(false)
+    // try {
+    //   await GardeService.deleteGardeById(id);
+    //   toast.success('Garde supprimée avec succès.');
+    //   setRefreshKey(prev => prev + 1);
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error('Échec de la suppression.');
+    // }
   };
 
   const handleAccept = async (id: string) => {
     try {
       await GardeService.updateStatutGarde(id, 'Validée');
       toast.success('Garde acceptée.');
-      setRefreshKey(prev => prev + 1);
+      // setRefreshKey(prev => prev + 1);
     } catch (err) {
       console.error(err);
       toast.error("Échec de l'acceptation.");
@@ -128,3 +145,95 @@ export default function GuardsSection() {
     </div>
   );
 }
+
+ const ReportModal = ({ open, onClose }: ReportModalProps) => {
+  const [dateGarde, setDateGarde] = useState("");
+  const [type, setType] = useState("Jour");
+  const [comment, setComment] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!dateGarde || !type) {
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      return;
+    }
+
+    // const gardeData = {
+    //   date: dateGarde,
+    //   type,
+    //   nom_pharmacie: "",
+    //   responsable: "",
+    //   commune: "",
+    //   statut: "En attente", // majuscule cohérent avec ton back
+    //   commentaire: comment,
+    // };
+
+    try {
+      // await create(gardeData);
+      toast.success("Garde signalée avec succès !");
+      onClose();
+      setDateGarde("");
+      setType("Jour");
+      setComment("");
+    } catch {
+      toast.error("Une erreur est survenue lors de la création de la garde");
+      onClose();
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Signaler une garde</DialogTitle>
+        </DialogHeader>
+
+        <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
+          <div>
+            <Label>Date de garde</Label>
+            <Input type="date" value={dateGarde} onChange={(e) => setDateGarde(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Type de garde</Label>
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Jour">Jour</SelectItem>
+                <SelectItem value="Nuit">Nuit</SelectItem>
+                <SelectItem value="Week-end">Week-end</SelectItem>
+                <SelectItem value="Férié">Férié</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Commentaire (optionnel)</Label>
+            <Input
+              type="text"
+              placeholder="Commentaire"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="submit"
+              className="bg-primary-600 text-white hover:bg-primary-700 h-8 px-3 py-1 text-sm rounded"
+            >
+              Soumettre ma demande
+            </Button>
+          </DialogFooter>
+        </form>
+
+        <div className="mt-6 text-yellow-700 bg-yellow-50 border border-yellow-100 rounded px-4 py-2 text-sm">
+          En attente de validation de l’administrateur
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};

@@ -29,20 +29,19 @@ const ProfilPage = () => {
 
   const handleSubmit = () => {
     try {
-      // Mise à jour du localStorage
+      
       updateSessionValue('userNom', formData.nom_pharmacie);
       updateSessionValue('userPrenom', formData.chef_pharmacie);
       updateSessionValue('userEmail', formData.email);
       updateSessionValue('userNumero', formData.numero);
 
-      // Appel de la fonction de mise à jour du profil
       updateProfilePharmacy(formData, session?.userId || '');
 
-      setTextChange('Save changements..')
+      setTextChange('Save en cour...')
       setTimeout(() => {
         setTextChange('Save changements')
         toast.success('Profil mis à jour avec succès');
-      }, 700)
+      }, 1000)
     } catch (error) {
       toast.error('Erreur lors de la mise à jour');
     }

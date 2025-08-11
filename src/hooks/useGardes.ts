@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import type { AttributCreerGarde, GardeFromAPI, ListGardByAdminResponse } from '../types/garde';
 import { GardeService } from '../services/gardeService';
+import toast from 'react-hot-toast';
 
 export const useGardes = (userId?: string, utilisateur_type?: string) => {
     const [gardes, setGardes] = useState<AttributCreerGarde[]>([]);
@@ -46,7 +47,7 @@ export const useGardes = (userId?: string, utilisateur_type?: string) => {
                 .then((res:GardeFromAPI) => {
                     const dataResponse = res;
                     console.log(dataResponse);
-
+                    // toast.error('vous avez pas de garde !!!')
                     if (!Array.isArray(dataResponse)) {
                         console.warn('Les données ne sont pas un tableau :', dataResponse);
                         return setGardes([]);

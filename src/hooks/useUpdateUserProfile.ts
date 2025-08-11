@@ -12,7 +12,7 @@ export function useUpdateUserProfile() {
         setErrors(null);
         try {
             await updateUserProfileService(payload, userId);
-            setSession
+            // setSession
             // Cast double pour satisfaire TS
             setSession(payload as unknown as Record<string, unknown>);
         } catch (err: any) {
