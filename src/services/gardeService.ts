@@ -2,6 +2,22 @@
 import type { AttributCreerGarde, ListGardByAdminResponse } from '../types/garde';
 import type { UpdateGardes } from '../types/garde';
 import { GardeAPI } from '../api/garde.api';
+import { http, axiosAdmin } from '@/api/axiosClient';
+import { getSession } from '@/helpers/local-storage';
+
+
+const session_id = getSession()?.userId;
+
+if (!session_id) {
+  console.log("Utilisateur non identifié");
+}
+
+
+interface UpdateOrDeleteGardePayload {
+  id_garde: string;
+  action: 'update' | 'delete';
+  userId: string;
+}
 
 export const GardeService = {
   getAllGardes: async (id: string): Promise<ListGardByAdminResponse> => {
@@ -19,6 +35,14 @@ export const GardeService = {
   updateGardeByPharma: (id: string, data: UpdateGardes) => {
     return GardeAPI.updateGardeByPharma(id, data);
   },
+
+  updateOrDeleteGarde: (payload: UpdateOrDeleteGardePayload) => {
+    const session_id = getSession()?.userId;
+    if (!session_id) throw new Error("Utilisateur non identifié");
+    
+    return GardeAPI.updateGarde(payload, session_id);
+  },
+
 
   updateStatutGarde: async (
     id: string,
