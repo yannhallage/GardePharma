@@ -68,7 +68,7 @@ const AdminLayout: React.FC<{ tab: string; setTab: (t: string) => void; children
                 onClick={() => {
                   removeSession()
                   navigate('/login')
-                  toast.success('Déconnexion réussie !')
+                  
                 }}
               >
                 <LogOut className="h-4 w-4 mr-2" /> Déconnexion
