@@ -6,3 +6,7 @@ import type { HistoriqueApiResponse } from '../types/historiques';
 export const fetchAdminHistoryApi = (id: string) => {
     return http.get<HistoriqueApiResponse>(axiosAdmin, `/listehistorique/${id}`);
 };
+
+export const Notification = (id: string) => {
+    return http.get<HistoriqueApiResponse>(axiosAdmin, `/listehistorique/${id}`);
+};

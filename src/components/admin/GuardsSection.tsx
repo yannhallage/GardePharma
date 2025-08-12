@@ -37,29 +37,39 @@ export default function GuardsSection() {
   // const [refreshKey, setRefreshKey] = useState(0);
   const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined, 'admin');
 
-  const handleDelete = async (id: string) => {
-    console.log('supprimer', id)
-    // ReportModal(false)
-    // try {
-    //   await GardeService.deleteGardeById(id);
-    //   toast.success('Garde supprimée avec succès.');
-    //   setRefreshKey(prev => prev + 1);
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error('Échec de la suppression.');
-    // }
-  };
-
-  const handleAccept = async (id: string) => {
+  const handleDelete = async (id: string, userId:string) => {
     try {
-      await GardeService.updateStatutGarde(id, 'Validée');
-      toast.success('Garde acceptée.');
-      // setRefreshKey(prev => prev + 1);
+
+      const userId = getSession()?.userId;
+      if (!userId) {
+        toast.error("Utilisateur non identifié");
+        return;
+      }
+      await GardeService.updateOrDeleteGarde({
+        id_garde: id,
+        action: "delete",
+        userId
+      });
+      toast.success('Garde supprimée');
     } catch (err) {
-      console.error(err);
-      toast.error("Échec de l'acceptation.");
+      toast.error('Erreur acceptation.');
     }
   };
+
+  const handleAccept = async (idGarde: string, userId: string) => {
+    try {
+      
+      await GardeService.updateOrDeleteGarde({
+        id_garde: idGarde,
+        action: "update",
+        userId: userId,
+      });
+      toast.success('Garde acceptée.');
+    } catch (err) {
+      toast.error('Erreur acceptation.');
+    }
+  };
+
 
   return (
     <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
@@ -96,7 +106,7 @@ export default function GuardsSection() {
                 </tr>
               ) : (
                 gardes.map(guard => (
-                  <tr key={guard._id} className="border-b last:border-0 hover:bg-gray-100 transition group">
+                  <tr key={guard._id} className={`border-b last:border-0 hover:bg-gray-100 transition group ${guard._id}`}>
                     <td className="px-4 py-3 font-medium text-gray-900">{guard.nom_pharmacie}</td>
                     <td className="px-4 py-3 text-gray-700">{guard.responsable}</td>
                     <td className="px-4 py-3 text-gray-600">{new Date(guard.date).toLocaleDateString()}</td>
@@ -120,16 +130,26 @@ export default function GuardsSection() {
                         >
                           <DropdownMenu.Item
                             className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 gap-2 cursor-pointer"
-                            onSelect={() => handleDelete(guard._id)}
+                            onSelect={() => handleDelete(guard._id || '', guard.userId)}
                           >
                             <Trash2 className="h-4 w-4 mr-2" /> Supprimer
                           </DropdownMenu.Item>
-                          {guard.statut === 'En attente' && (
+                          {guard.statut === 'en attente' && (
                             <DropdownMenu.Item
-                              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 gap-2 cursor-pointer"
-                              onSelect={() => handleAccept(guard._id)}
+                              className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-gray-100 gap-2 cursor-pointer"
+                              onSelect={() => handleAccept(guard._id || '', guard.userId)}
                             >
-                              <span className="h-4 w-4 mr-2 inline-block">✔️</span> Accepter
+                              <span className="h-4 w-4 mr-2 inline-block">✔️</span> Accepter <br />
+                              {/* <span className="h-4 w-4 mr-2 inline-block">📝</span> Modifier */}
+                            </DropdownMenu.Item>
+                          )}
+                          {guard.statut === 'en attente' && (
+                            <DropdownMenu.Item
+                              className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-gray-100 gap-2 cursor-pointer"
+                              onSelect={() => handleAccept(guard._id || '')}
+                            >
+                              {/* <span className="h-4 w-4 mr-2 inline-block">✔️</span> Accepter <br /> */}
+                              <span className="h-4 w-4 mr-2 inline-block">📝</span> Modifier
                             </DropdownMenu.Item>
                           )}
                         </DropdownMenu.Content>
@@ -146,7 +166,7 @@ export default function GuardsSection() {
   );
 }
 
- const ReportModal = ({ open, onClose }: ReportModalProps) => {
+const ReportModal = ({ open, onClose }: ReportModalProps) => {
   const [dateGarde, setDateGarde] = useState("");
   const [type, setType] = useState("Jour");
   const [comment, setComment] = useState("");

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home } from 'lucide-react';
+import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home, Bell } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -18,9 +18,11 @@ import MesGardesPage from './pharmacy/MesGardesPage';
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
+
 import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { removeSession } from '@/helpers/local-storage';
 import { getSession } from '@/helpers/local-storage';
+import { NotificationsDialogExample } from './AdminDashboard';
 
 
 // const pharmacyName = getSession()?.userNom;
@@ -269,6 +271,7 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
   // const [type, setType] = useState('');
   // const [comment, setComment] = useState('');
   // const [openReportModal, setOpenReportModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
   const navigate = useNavigate();
   return (
@@ -293,6 +296,13 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
                 Signaler une garde
               </Button>
               <span className="text-sm text-neutral-600">{pharmacyName}</span>
+              <span className='cursor-pointer'
+                onClick={() => {
+                  setOpenModal(true)
+                }}
+              >
+                <Bell />
+              </span>
               <Button variant="outline" size="sm"
                 onClick={() => {
                   removeSession()
@@ -327,6 +337,11 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
+
+      <NotificationsDialogExample
+      open={openModal}
+      onClose={() => setOpenModal(false)}
+            />
     </div>
   );
 }
