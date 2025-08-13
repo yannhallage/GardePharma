@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Phone, Navigation, MapPin, Clock, Star, Users } from 'lucide-react';
+import { Phone, Navigation, MapPin, Clock, Star, Users, Globe } from 'lucide-react';
 
 // Fix des icônes Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -257,6 +258,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<any>(null);
 
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
@@ -264,22 +266,19 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
     const map = L.map(containerRef.current, {
       center: [7.54, -5.55], // Côte d'Ivoire
       zoom: 7,
-      zoomControl: false, // On va ajouter nos propres contrôles
+      zoomControl: false,
       attributionControl: false
     });
     mapRef.current = map;
 
-    // Style de carte moderne
     tileLayerRef.current = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
     }).addTo(map);
 
-    // Contrôles de zoom personnalisés
     L.control.zoom({
       position: 'bottomleft'
     }).addTo(map);
 
-    // Force un refresh de la carte
     setTimeout(() => {
       map.invalidateSize();
     }, 100);
@@ -295,51 +294,48 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Supprimer tous les anciens marqueurs
     mapRef.current.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
         mapRef.current?.removeLayer(layer);
       }
     });
 
-    // Grouper les pharmacies par commune
-    const pharmaciesByCommune: { [key: string]: Pharmacy[] } = {};
     pharmacies.forEach((pharmacy) => {
-      if (!pharmaciesByCommune[pharmacy.commune]) {
-        pharmaciesByCommune[pharmacy.commune] = [];
-      }
-      pharmaciesByCommune[pharmacy.commune].push(pharmacy);
-    });
+      const [lat, lng] = pharmacy.coordinates;
 
-    Object.entries(pharmaciesByCommune).forEach(([commune, group], index) => {
-      // Prendre les coordonnées de la première pharmacie de la commune
-      const [lat, lng] = group[0].coordinates;
-      const onDutyPharmacies = group.filter((p) => p.isOnDuty);
-      if (onDutyPharmacies.length === 0) return;
-
-      // Créer un marqueur personnalisé
       const markerElement = document.createElement('div');
-      markerElement.className = `custom-marker on-duty`;
-      markerElement.innerHTML = commune.substring(0, 3).toUpperCase(); // Afficher les 3 premières lettres de la commune
-      markerElement.classList.add('pulse-animation');
+      markerElement.className = `custom-marker ${pharmacy.isOnDuty ? 'on-duty' : 'off-duty'}`;
+      markerElement.innerHTML = pharmacy.logo;
+      if (pharmacy.isOnDuty) {
+        markerElement.classList.add('pulse-animation');
+      }
 
       const customIcon = L.divIcon({
         html: markerElement,
         className: 'custom-marker-container',
         iconSize: [44, 44],
         iconAnchor: [22, 44],
-        popupAnchor: [0, -44]
+        popupAnchor: [0, -44],
       });
 
       const marker = L.marker([lat, lng], { icon: customIcon }).addTo(mapRef.current!);
 
+      marker.bindPopup(`
+        <div class="text">
+          <div style="font-weight: bold;">${pharmacy.name}</div>
+          <div>${pharmacy.address}</div>
+          <div>Tél: ${pharmacy.phone}</div>
+          <div>Services: ${pharmacy.services?.join(', ')}</div>
+        </div>
+      `, { closeButton: false, offset: L.point(0, -44) });
+
+      marker.on('mouseover', () => marker.openPopup());
+      marker.on('mouseout', () => marker.closePopup());
+
       marker.on('click', () => {
-        if (onPharmacySelect) {
-          onPharmacySelect(group[0]);
-        }
-        if (onMarkerClick) {
-          onMarkerClick(group); // Passer toutes les pharmacies de la commune
-        }
+        setSelectedPharmacy(pharmacy);
+        if (onPharmacySelect) onPharmacySelect(pharmacy);
+        if (onMarkerClick) onMarkerClick([pharmacy]);
       });
     });
   }, [pharmacies, onPharmacySelect, onMarkerClick]);
@@ -347,57 +343,90 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
   return (
     <div className="relative h-full">
       <MapStyles />
-      
-      {/* Logo GardePharma */}
-      {/* <div className="logo-container">
-        <div className="logo-wrapper">
-          <img 
-            src="https://media.designrush.com/inspiration_images/549120/conversions/Pharma_ee5626592827-desktop.jpg" 
-            alt="GardePharma Logo" 
-            className="logo-image"
-          />
-          <span className="logo-text">GardePharma</span>
-        </div>
-      </div> */}
-
-      {/* Barre d'informations de transport */}
-      {/* <div className="transport-info-bar">
-        <div className="transport-item">
-          <svg className="transport-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
-          </svg>
-          <span>15 min</span>
-        </div>
-        <div className="transport-item">
-          <svg className="transport-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2c-4.42 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20v1h2l2-2h4l2 2h2v-1l-1.5-1c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm5.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-7h-5V6h5v4z"/>
-          </svg>
-          <span>33 min</span>
-        </div>
-        <div className="transport-item">
-          <svg className="transport-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/>
-          </svg>
-          <span>22 min</span>
-        </div>
-        <div className="transport-item">
-          <svg className="transport-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5zm5.8-10l2.4-2.4.8.8c1.1 1.1 1.1 2.9 0 4l-1.4 1.4c-.6.6-1.4.9-2.2.9s-1.6-.3-2.2-.9l-1.4-1.4c-.6-.6-.9-1.4-.9-2.2s.3-1.6.9-2.2l.8-.8 2.4-2.4c.4-.4 1-.4 1.4 0l2.4 2.4c.4.4.4 1 0 1.4z"/>
-          </svg>
-          <span>27 min</span>
-        </div>
-        <div className="transport-item">
-          <svg className="transport-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 7c0-1.1-.9-2-2-2h-3v2h3v2.65L13.52 14H10V9H6c-2.21 0-4 1.79-4 4v3h2c0 1.66 1.34 3 3 3s3-1.34 3-3h4.48L19 10.35V7zM7 17c-.55 0-1-.45-1-1h2c0 .55-.45 1-1 1z"/>
-          </svg>
-          <span>2 min</span>
-        </div>
-      </div> */}
-
       <div ref={containerRef} className="h-full w-full" />
+
+      <AnimatePresence>
+        {selectedPharmacy && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.3 }}
+            className="absolute bottom-4 left-4 bg-white shadow-lg rounded-xl w-96 border z-[9999] overflow-hidden"
+          >
+            {/* Image en haut */}
+            <div className="h-40 w-full">
+              <motion.img
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                transition={{ duration: 0.3 }}
+                src="https://www.ville-clichy.fr/uploads/Image/4b/IMF_ACCROCHE/GAB_CLICHY/58792_024_pharmacie-de-garde.jpg"
+                alt={selectedPharmacy.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Infos */}
+            <div className="p-4 space-y-1">
+              <h2 className="text-2xl font-bold text-gray-800">{selectedPharmacy.name}</h2>
+              <p className="text-gray-600">{selectedPharmacy.address}</p>
+              <p className="text-gray-700 flex items-center gap-2">
+                tél: <a href={`tel:${selectedPharmacy.phone}`} className='hover:text-blue-500 hover:underline'>{selectedPharmacy.phone}</a>
+              </p>
+              <p className="text-gray-700 flex items-center gap-2">
+                mail: {!selectedPharmacy.phone ? "contact@gardepharma.com" : "contact@gardepharma.com"}
+              </p>
+              <p className="text-gray-700 flex items-center gap-2">
+                horaires : {selectedPharmacy.dutyHours ? selectedPharmacy.dutyHours : ""}
+              </p>
+              <p className="text-gray-600 text-sm flex items-center gap-1">
+                <span className="font-semibold flex items-center gap-1">
+                  Rating :
+                </span>
+                {/* {selectedPharmacy.rating ? selectedPharmacy.rating : ""} */}
+                {selectedPharmacy.rating ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-3 w-3 text-yellow-500 fill-current mr-1"
+                    />
+                  ))
+                ) : null}
+
+              </p>
+              <p className="text-gray-600 text-sm flex items-center gap-1">
+                <span className="font-semibold flex items-center gap-1">
+                  Services :
+                </span>
+                {selectedPharmacy.services.join(", ")}
+              </p>
+
+              {/* Description */}
+              <hr className="mt-2" />
+              <div className="space-y-2 mt-4">
+                <h3 className="text-lg font-semibold">Description</h3>
+                <p className="text-gray-500 text-sm">
+                  Bienvenue dans notre pharmacie. Nous offrons des services de qualité, avec un personnel attentif à vos besoins.
+                </p>
+              </div>
+
+              {/* Bouton Fermer */}
+              <button
+                onClick={() => setSelectedPharmacy(null)}
+                className="mt-4 w-full py-2 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg"
+              >
+                Fermer
+              </button>
+            </div>
+          </motion.div>
+
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
 
 const MapComponent: React.FC<MapComponentProps> = ({ pharmacies, onPharmacySelect, onMarkerClick }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -415,7 +444,11 @@ const MapComponent: React.FC<MapComponentProps> = ({ pharmacies, onPharmacySelec
     return <LoadingSpinner />;
   }
 
-  return <LeafletMap pharmacies={pharmacies} onPharmacySelect={onPharmacySelect} onMarkerClick={onMarkerClick} />;
+  return (
+    <>
+      <LeafletMap pharmacies={pharmacies} onPharmacySelect={onPharmacySelect} onMarkerClick={onMarkerClick} />
+    </>
+  )
 };
 
 export default MapComponent;
