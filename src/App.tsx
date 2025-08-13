@@ -11,7 +11,10 @@ import UserDashboard from './pages/UserDashboard';
 import PresentationPage from './pages/PresentationPage';
 import PharmacyPage from './pages/PharmacyPage';
 import AdminDashboard from './pages/AdminDashboard';
+
 import { getSession } from '@/helpers/local-storage';
+// import { PharmaciesMap } from './components/map/PharmaciesMap';
+// import MapComponent from './components/map/MapComponent';
 
 // Page mot de passe oublié
 const ForgotPasswordPage = () => (
@@ -36,6 +39,7 @@ const App: React.FC = () => {
 
           <Route path="/" element={<PresentationPage />} />
           <Route path="/localisation" element={<UserDashboard />} />
+          {/* <Route path="/map" element={<PharmaciesMap />} /> */}
 
           {/* Pharmacy Dashboard protégé */}
           <Route
