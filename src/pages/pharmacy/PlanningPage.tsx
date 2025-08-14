@@ -128,7 +128,7 @@ const PlanningPage = ({ onAdd }: PlanningPageProps) => {
       id_garde: recupererID,
       newDate: proposedDate + 'T00:00:00.000Z',
       comments: eventComment,
-      statut: 'En attente'
+      statut: 'en attente'
     };
 
     let userId = getSession()?.userId ?? '';

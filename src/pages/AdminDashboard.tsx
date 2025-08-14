@@ -17,6 +17,7 @@ import GuardsSection from '../components/admin/GuardsSection';
 
 import { motion } from 'framer-motion';
 import AdminHistory from '../components/admin/AdminHistory';
+import { useNotification } from '@/hooks/sockets/useNotifications';
 import ProfileForm from '../components/admin/ProfileForm';
 import { getSession, removeSession } from '@/helpers/local-storage';
 import toast from 'react-hot-toast';
@@ -68,7 +69,7 @@ const AdminLayout: React.FC<{ tab: string; setTab: (t: string) => void; children
                 onClick={() => {
                   removeSession()
                   navigate('/login')
-                  
+
                 }}
               >
                 <LogOut className="h-4 w-4 mr-2" /> Déconnexion
@@ -124,11 +125,12 @@ export default function AdminDashboard() {
   let content = null;
   if (tab === 'Dashboard') content = (
     <motion.div {...sectionMotion}>
-      <h2 className="text-2xl font-bold text-green-800 mb-6">Bienvenue sur le dashboard administrateur</h2>
+      <h2 className="text-2xl font-bold text-green-800 mb-6">Bienvenue sur le dashboard administrateur </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard label="Pharmacies actives" value="12" />
         <StatCard label="Gardes à venir" value="8" />
         <StatCard label="Demandes en attente" value="3" />
+        <StatCard label="Nombre de pharmacie" value="10" />
       </div>
       <div className="flex gap-4 mb-8">
         <ExportPlanningButton />
@@ -295,24 +297,31 @@ function ProfileFormSection() {
 
 
 export function NotificationsDialogExample({ open, onClose }: NotificationsDialogExampleProps) {
-  const { notifications, loading } = useNotifications();
+  const [pharmacyId] = useState(getSession()?.userId ?? '');
+  const lastNotification = useNotification(pharmacyId); // Hook pour la dernière notif
+  const { notifications, loading } = useNotifications(pharmacyId);
+
+  // Crée une liste combinée : notifications existantes + dernière notif si elle n'est pas déjà incluse
+  const allNotifications = lastNotification
+    ? [{ message: lastNotification, date: new Date().toISOString() }, ...notifications]
+    : notifications;
 
   return (
     <div className="p-6">
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Notifications</DialogTitle>
+            <DialogTitle>Notifications {allNotifications.length}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-2 min-h-[100px]">
             {loading && <p className="text-center text-gray-500">Chargement des notifications...</p>}
 
-            {!loading && notifications.length === 0 && (
+            {!loading && allNotifications.length === 0 && (
               <p className="text-center text-gray-400 italic">Aucune notification pour le moment.</p>
             )}
 
-            {!loading && notifications.length > 0 && notifications.map((notif, index) => {
+            {!loading && allNotifications.length > 0 && allNotifications.map((notif, index) => {
               // Déterminer le titre en fonction du message (exemple)
               let title = 'Information';
               if (/validation/i.test(notif.message)) title = 'Validation';
@@ -378,3 +387,4 @@ export function NotificationsDialogExample({ open, onClose }: NotificationsDialo
     </div>
   );
 }
+

@@ -4,6 +4,9 @@ import { Toaster } from 'react-hot-toast';
 
 import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+// import { useNotifications } from '@/hooks/sockets/useNotifications';
+
+// import "./socket-test";
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -31,7 +34,8 @@ const ForgotPasswordPage = () => (
 
 const App: React.FC = () => {
   const session = getSession();
-
+  // const userId = getSession()?.userId || '';
+  // useNotifications(userId);
   return (
     <Router>
       <div className="App">
