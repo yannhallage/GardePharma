@@ -15,6 +15,7 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import DashboardPage from './pharmacy/DashboardPage';
 import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
+
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
@@ -23,6 +24,7 @@ import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { removeSession } from '@/helpers/local-storage';
 import { getSession } from '@/helpers/local-storage';
 import { NotificationsDialogExample } from './AdminDashboard';
+// import { useNotifications } from '@/hooks/sockets/useNotifications';
 
 
 // const pharmacyName = getSession()?.userNom;
@@ -273,6 +275,14 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
   // const [openReportModal, setOpenReportModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
+  // const [pharmacyId, setPharmacyId] = useState(getSession()?.userId ?? '')
+
+  // console.log(pharmacyId)
+  // if (pharmacyId) {
+  //   useNotifications(pharmacyId);
+  // }
+
+
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -339,9 +349,9 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
       </main>
 
       <NotificationsDialogExample
-      open={openModal}
-      onClose={() => setOpenModal(false)}
-            />
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      />
     </div>
   );
 }

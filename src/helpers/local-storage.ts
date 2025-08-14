@@ -1,5 +1,5 @@
 import type { AuthentificationResponse } from '../types/auth/authentification.type';
-
+import { useNotifications } from '@/hooks/useNotifications';
 import type { AuthAdminResponse } from '../types/auth/authAdmin.types';
 import type { PharmacyRegisterResponse } from '../types/register/pharmacy-register';
 
@@ -88,6 +88,7 @@ export const getSession = () => {
 
     if (!token || !userEmail || !userType) return null;
 
+    // useNotifications(userId)
     return {
         token,
         userEmail,

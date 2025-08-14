@@ -1,7 +1,9 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { useGardes } from '@/hooks/useGardes';
+
 import { getSession } from '@/helpers/local-storage';
+import { Phone,RefreshCcw } from 'lucide-react';
 
 // const GARDE_DATA = [
 //   {
@@ -50,6 +52,9 @@ const MesGardesPage = () => {
       <CardHeader className="border-b border-gray-100 bg-gray-50 px-6 py-4">
         <CardTitle className="text-gray-800 text-lg font-bold tracking-tight">
           Gestion des gardes
+          {/* <span className='float-end text-gray-400'>
+            <RefreshCcw />
+          </span> */}
         </CardTitle>
       </CardHeader>
 
