@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home, Bell } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -15,6 +15,8 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import DashboardPage from './pharmacy/DashboardPage';
 import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
+// import { setStorageItem } from "@/helpers/storageEvents";
+
 
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
@@ -26,9 +28,6 @@ import { getSession } from '@/helpers/local-storage';
 import { NotificationsDialogExample } from './AdminDashboard';
 // import { useNotifications } from '@/hooks/sockets/useNotifications';
 
-
-// const pharmacyName = getSession()?.userNom;
-
 interface ReportModalProps {
   open: boolean;
   onClose: () => void;
@@ -37,10 +36,12 @@ interface ReportModalProps {
 const navItems = [
   { icon: Home, label: 'Accueil', key: 'Accueil' },
   { icon: CalendarIcon, label: 'Planning', key: 'Planning' },
-  { icon: ClipboardList, label: 'Mes Gardes', key: 'Mes Gardes' },
+  { icon: ClipboardList, label: `Mes Gardes`, key: 'Mes Gardes', showBadge: true },
   { icon: ClipboardList, label: 'Historique', key: 'Historique' },
   { icon: Settings, label: 'Modifier mon compte', key: 'Profil' },
 ];
+
+
 
 const GARDE_EVENTS_FC = [
   {
@@ -311,7 +312,14 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
                   setOpenModal(true)
                 }}
               >
-                <Bell />
+                <div className="relative inline-block">
+                  {/* Icône de cloche */}
+                  <Bell className="w-6 h-6 text-gray-700" />
+
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
+                    {localStorage.getItem('nombreDeNotifications') ? localStorage.getItem('nombreDeNotifications') : '0'}
+                  </span>
+                </div>
               </span>
               <Button variant="outline" size="sm"
                 onClick={() => {

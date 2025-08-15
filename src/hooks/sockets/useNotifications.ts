@@ -9,8 +9,6 @@ export const useNotification = (userId: string) => {
     useEffect(() => {
         if (!userId) return;
 
-        // Initialise la connexion socket
-        // console.log(userId)
         initSocket(userId);
 
         const handleNotification = (data: { message: string }) => {
