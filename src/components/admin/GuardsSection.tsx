@@ -37,7 +37,27 @@ export default function GuardsSection() {
   // const [refreshKey, setRefreshKey] = useState(0);
   const { gardes, loading, error } = useGardes(getSession()?.userId ?? undefined, 'admin');
 
-  const handleDelete = async (id: string, userId:string) => {
+  const handleDelete = async (id: string, idGuard: string) => {
+    try {
+
+      const userSession = getSession()?.userId;
+      if (!userSession) {
+        toast.error("Utilisateur non identifié");
+        return;
+      }
+      await GardeService.updateOrDeleteGarde({
+        id_garde: idGuard,
+        action: "delete",
+        userId: id
+      });
+
+      toast.success('Garde supprimée');
+    } catch (err) {
+      toast.error('Erreur acceptation.');
+    }
+  };
+
+  const handleAccept = async (id: string, idGuard: string) => {
     try {
 
       const userId = getSession()?.userId;
@@ -45,24 +65,11 @@ export default function GuardsSection() {
         toast.error("Utilisateur non identifié");
         return;
       }
-      await GardeService.updateOrDeleteGarde({
-        id_garde: id,
-        action: "delete",
-        userId
-      });
-      toast.success('Garde supprimée');
-    } catch (err) {
-      toast.error('Erreur acceptation.');
-    }
-  };
 
-  const handleAccept = async (idGarde: string, userId: string) => {
-    try {
-      
       await GardeService.updateOrDeleteGarde({
-        id_garde: idGarde,
+        id_garde: idGuard,
         action: "update",
-        userId: userId,
+        userId: id,
       });
       toast.success('Garde acceptée.');
     } catch (err) {
@@ -130,14 +137,14 @@ export default function GuardsSection() {
                         >
                           <DropdownMenu.Item
                             className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 gap-2 cursor-pointer"
-                            onSelect={() => handleDelete(guard._id || '', guard.userId)}
+                            onSelect={() => handleDelete(guard.userId, guard._id || '')}
                           >
                             <Trash2 className="h-4 w-4 mr-2" /> Supprimer
                           </DropdownMenu.Item>
                           {guard.statut === 'en attente' && (
                             <DropdownMenu.Item
                               className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-gray-100 gap-2 cursor-pointer"
-                              onSelect={() => handleAccept(guard._id || '', guard.userId)}
+                              onSelect={() => handleAccept(guard.userId, guard._id || '')}
                             >
                               <span className="h-4 w-4 mr-2 inline-block">✔️</span> Accepter <br />
                               {/* <span className="h-4 w-4 mr-2 inline-block">📝</span> Modifier */}
@@ -146,7 +153,7 @@ export default function GuardsSection() {
                           {guard.statut === 'en attente' && (
                             <DropdownMenu.Item
                               className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-gray-100 gap-2 cursor-pointer"
-                              onSelect={() => handleAccept(guard._id || '')}
+                              onSelect={() => handleAccept(guard.userId, guard._id || '')}
                             >
                               {/* <span className="h-4 w-4 mr-2 inline-block">✔️</span> Accepter <br /> */}
                               <span className="h-4 w-4 mr-2 inline-block">📝</span> Modifier

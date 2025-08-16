@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { v4 as uuidv4 } from 'uuid';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home, Bell } from 'lucide-react';
@@ -191,25 +192,35 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!dateGarde || !type) {
+    if (!dateGarde || !type || !getSession()?.userId) {
       toast.error("Veuillez remplir tous les champs obligatoires");
       return;
     }
+    const userId = getSession()?.userId;
+    const userCommune = getSession()?.userCommune;
+    const userResponsable = getSession()?.userPrenom;
+    const userNom = getSession()?.userNom;
+    const userIdentification = getSession().userIdentification
 
     const gardeData = {
-      // reference: `GARDE-${Date.now()}`,  
-      date: dateGarde,
+      reference: uuidv4(),
+      // date: dateGarde,
+      date: new Date(`${dateGarde}T00:00:00.000Z`).toISOString(),
       type: type,
-      nom_pharmacie: "",
-      responsable: "",
-      commune: "",
+      nom_pharmacie: userNom,
+      userId: userId,
+      identification_pharma: userIdentification,
+      responsable: userResponsable,
+      commune: userCommune,
       statut: "en attente",
       commentaire: comment,
     };
 
+    console.log(gardeData)
     try {
-      await create(gardeData);
-      toast.success("Garde signalée avec succès !");
+
+      await create(gardeData, getSession()?.userId);
+      toast.success("Garde!");
       onClose();
       setDateGarde("");
       setType("Jour");
@@ -219,6 +230,7 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
       onClose();
     }
   };
+
 
 
   return (

@@ -8,13 +8,14 @@ export interface Authentification {
 export interface AuthentificationResponse {
     token: string;
     user: {
-        id: string;
-        // identification: string;
+        _id: string;
+        identification: string;
         nom_pharmacie: string;
         chef_pharmacie:string;
         commune:string;
         details:string;
         numero:string;
+        lieu:string;
         email: string;
         userType: string;
         [key: string]: any;

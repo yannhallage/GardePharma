@@ -14,6 +14,9 @@ export interface AuthAdminResponse {
         prenom: string;
         numero: string
         email: string;
+        commune: string;
+        lieu: string;
+        details: string;
         [key: string]: any;
     };
 }
