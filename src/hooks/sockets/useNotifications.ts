@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { initSocket } from '@/api/sockets/socket';
 import { onNotification, offNotification } from '@/services/sockets/notificationService';
-import { toast } from 'react-hot-toast';
+// import { toast } from 'react-hot-toast';
 
 export const useNotification = (userId: string) => {
     const [lastNotification, setLastNotification] = useState<string | null>(null);

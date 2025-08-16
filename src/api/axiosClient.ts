@@ -5,6 +5,7 @@ import type { AxiosInstance } from 'axios';
 const urlAuth = import.meta.env.VITE_API_URL_AUTH;
 const urlPharma = import.meta.env.VITE_API_URL_PHARMA;
 const urlAdmin = import.meta.env.VITE_API_URL_ADMIN;
+const urlPublic = import.meta.env.VITE_API_URL_PUBLIC;
 
 export const axiosAuth = axios.create({
   baseURL: urlAuth,
@@ -22,6 +23,12 @@ export const axiosPharma = axios.create({
 
 export const axiosAdmin = axios.create({
   baseURL: urlAdmin,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+export const axiosPublic = axios.create({
+  baseURL: urlPublic,
   headers: {
     'Content-Type': 'application/json',
   },
