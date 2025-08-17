@@ -56,15 +56,27 @@ export default function PharmacyAccountsManager() {
     if (!session) return console.log('Session non valide. Veuillez vous connecter.');
 
     try {
+
+      if (formData) {
+        console.log(formData)
+      }
+
       await add(formData, session);
       setFormData({
-        // identification: '',
         nom_pharmacie: '',
         email: '',
         chef_pharmacie: '',
         commune: '',
         numero: ''
       });
+      // toast.promise(
+      //   saveSettings(settings),
+      //   {
+      //     loading: 'Saving...',
+      //     success: <b>Settings saved!</b>,
+      //     error: <b>Could not save.</b>,
+      //   }
+      // );
       toast.success("Pharmacie ajoutée avec succès !");
     } catch (error) {
       toast.error("Erreur lors de l'ajout de la pharmacie.");

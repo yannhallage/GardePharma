@@ -16,6 +16,7 @@ import PharmacyPage from './pages/PharmacyPage';
 import AdminDashboard from './pages/AdminDashboard';
 
 import { getSession } from '@/helpers/local-storage';
+// import ConfigurationPharmacy from './pages/pharmacy/configuration';
 // import { PharmaciesMap } from './components/map/PharmaciesMap';
 // import MapComponent from './components/map/MapComponent';
 
@@ -54,6 +55,14 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          {/* <Route
+            path="/configuration"
+            element={
+              // <ProtectedRoute allowedRoles={['pharmacy']}>
+              // </ProtectedRoute>
+                <ConfigurationPharmacy />
+            }
+          /> */}
 
           {/* Admin Dashboard protégé */}
           <Route

@@ -24,7 +24,10 @@ interface FormData {
   nom_pharmacie: string;
   chef_pharmacie: string;
   email: string;
+  description: string,
+  itineraire: string,
   numero: string;
+  images: string;
   commune: string;
   lieu: string;
   details: string;
@@ -38,7 +41,10 @@ const RegisterPage: React.FC = () => {
     chef_pharmacie: '',
     email: '',
     numero: '',
+    description: '',
+    itineraire: '',
     commune: '',
+    images: '',
     lieu: '',
     details: '',
     password: '',
@@ -116,39 +122,66 @@ const RegisterPage: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  const validateStep3 = () => {
+    const newErrors: Partial<FormData> = {};
+
+    if (!formData.itineraire) {
+      newErrors.itineraire = 'Le mot de passe est requis';
+    } else if (formData.itineraire.length < 8) {
+      newErrors.itineraire = 'itineraire doit contenir au moins 12 caractères';
+    }
+
+    if (!formData.description) {
+      newErrors.description = 'Decrivez votre pharmacie';
+    } else if (formData.description.length < 8) {
+      newErrors.description = 'La descrption doit etre important';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleNext = () => {
+    // console.log(true)
     if (validateStep1()) {
       setCurrentStep(2);
     }
-  };
+    if (validateStep2()) {
+      setCurrentStep(3);
+    }
+  }
 
   const handleBack = () => {
     setCurrentStep(1);
+  };
+  const handleBackSecond = () => {
+    setCurrentStep(2);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateStep2()) {
+    if (!validateStep3()) {
       return;
     }
 
     setIsLoading(true);
     try {
+      console.log(formData.images)
       const response: any = await register({
         nom_pharmacie: formData.nom_pharmacie,
         chef_pharmacie: formData.chef_pharmacie,
         email: formData.email,
         numero: formData.numero,
         commune: formData.commune,
+        description: formData.description,
+        itineraire: formData.itineraire,
+        images: formData.images,
         lieu: formData.lieu,
         details: formData.details,
-        userType:'pharmacy',
+        userType: 'pharmacy',
         password: formData.password,
       });
-
-      if (response) { console.log(response) }
     } catch (error: any) {
       console.error('Erreur de connexion', error);
       toast.error('Échec de la connexion. Veuillez vérifier vos identifiants.');
@@ -171,6 +204,8 @@ const RegisterPage: React.FC = () => {
       chef_pharmacie: '',
       email: '',
       numero: '',
+      description: '',
+      itineraire: '',
       commune: '',
       lieu: '',
       details: '',
@@ -235,17 +270,49 @@ const RegisterPage: React.FC = () => {
         {/* Indicateur de progression */}
         <div className="flex items-center justify-center mb-6">
           <div className="flex items-center space-x-3">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm ${currentStep >= 1 ? 'bg-primary-500 border-primary-500 text-white' : 'border-neutral-300 text-neutral-400'
-              }`}>
-              {currentStep > 1 ? <CheckCircle className="h-4 w-4" /> : '1'}
+            {/* Step 1 */}
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm ${currentStep >= 1
+                ? "bg-primary-500 border-primary-500 text-white"
+                : "border-neutral-300 text-neutral-400"
+                }`}
+            >
+              {currentStep > 1 ? <CheckCircle className="h-4 w-4" /> : "1"}
             </div>
-            <div className={`w-12 h-0.5 ${currentStep >= 2 ? 'bg-primary-500' : 'bg-neutral-300'
-              }`}></div>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm ${currentStep >= 2 ? 'bg-primary-500 border-primary-500 text-white' : 'border-neutral-300 text-neutral-400'
-              }`}>
-              {currentStep > 2 ? <CheckCircle className="h-4 w-4" /> : '2'}
+
+            {/* Line between 1 and 2 */}
+            <div
+              className={`w-12 h-0.5 ${currentStep >= 2 ? "bg-primary-500" : "bg-neutral-300"
+                }`}
+            ></div>
+
+            {/* Step 2 */}
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm ${currentStep >= 2
+                ? "bg-primary-500 border-primary-500 text-white"
+                : "border-neutral-300 text-neutral-400"
+                }`}
+            >
+              {currentStep > 2 ? <CheckCircle className="h-4 w-4" /> : "2"}
+            </div>
+
+            {/* Line between 2 and 3 */}
+            <div
+              className={`w-12 h-0.5 ${currentStep >= 3 ? "bg-primary-500" : "bg-neutral-300"
+                }`}
+            ></div>
+
+            {/* Step 3 */}
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm ${currentStep >= 3
+                ? "bg-primary-500 border-primary-500 text-white"
+                : "border-neutral-300 text-neutral-400"
+                }`}
+            >
+              {currentStep > 3 ? <CheckCircle className="h-4 w-4" /> : "3"}
             </div>
           </div>
+
         </div>
 
         {/* Formulaire */}
@@ -439,7 +506,7 @@ const RegisterPage: React.FC = () => {
                     </Button>
                   </div>
                 </>
-              ) : (
+              ) : currentStep === 2 ? (
                 <>
                   {/* Sécurité du compte */}
                   <div className="space-y-4">
@@ -511,6 +578,135 @@ const RegisterPage: React.FC = () => {
                       type="button"
                       variant="outline"
                       onClick={handleBack}
+                      className="text-sm py-2 px-4"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5 mr-2" />
+                      Retour
+                    </Button>
+                    {/* <Button
+                      type="submit"
+                      className="text-sm py-2 px-4 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-md"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Création en cours...
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          Créer le compte
+                          <ArrowRight className="h-3.5 w-3.5 ml-2" />
+                        </div>
+                      )}
+                    </Button> */}
+                    <div className="flex justify-end pt-2">
+                      <Button
+                        type="button"
+                        onClick={handleNext}
+                        className="text-sm py-2 px-4 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-md"
+                      >
+                        Suivant
+                        <ArrowRight className="h-3.5 w-3.5 ml-2" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    {/* Itinéraire */}
+                    <div className="space-y-1">
+                      <label htmlFor="itineraire" className="block text-xs font-semibold text-neutral-700">
+                        Itinéraire *
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
+                        <input
+                          id="itineraire"
+                          type="text"
+                          value={formData.itineraire}
+                          onChange={(e) => handleInputChange("itineraire", e.target.value)}
+                          className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200 bg-white/50 text-sm ${errors.itineraire ? "border-red-500" : "border-neutral-300"
+                            }`}
+                          placeholder="Entrez l'itinéraire"
+                        />
+                      </div>
+                      {errors.itineraire && (
+                        <p className="text-red-500 text-xs flex items-center">
+                          <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                          {errors.itineraire}
+                        </p>
+                      )}
+                    </div>
+                    {/* Upload fichier */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-neutral-700">Image / Fichier</label>
+                      <div className="flex justify-center items-center w-full">
+                        <label
+                          htmlFor="file-upload"
+                          className="flex flex-col justify-center items-center w-full h-32 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer bg-white/50 hover:bg-neutral-50 transition"
+                        >
+                          <svg
+                            className="w-8 h-8 mb-2 text-neutral-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                          </svg>
+                          <p className="text-sm text-neutral-500">Drop your image here</p>
+                          <p className="text-xs text-neutral-400">SVG, PNG, JPG or GIF (max. 2MB)</p>
+                          <span className="mt-2 px-3 py-1 text-xs font-medium rounded-lg bg-primary-500 text-white">
+                            Select image
+                          </span>
+                          <input
+                            id="file-upload"
+                            type="file"
+                            name="photo"
+                            accept=".png,.jpg,.jpeg,.gif,.svg"
+                            className="hidden"
+                            // accept=".png,.jpg,.jpeg,.gif,.svg"
+                            onChange={(e) => handleInputChange("images", e.target.files?.[0] || null)}
+                          />
+                        </label>
+                      </div>
+                      {/* {errors.file && (
+                        <p className="text-red-500 text-xs flex items-center">
+                          <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                          {errors.file}
+                        </p>
+                      )} */}
+                    </div>
+                    {/* Description */}
+                    <div className="space-y-1 md:col-span-2">
+                      <label htmlFor="details" className="block text-xs font-semibold text-neutral-700">
+                        Description de la pharmacie
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-2.5 top-2.5 transform -translate-y-1 h-3.5 w-3.5 text-neutral-400" />
+                        <textarea
+                          id="details"
+                          value={formData.description}
+                          onChange={(e) => handleInputChange("description", e.target.value)}
+                          className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200 bg-white/50 text-sm ${errors.description ? "border-red-500" : "border-neutral-300"
+                            }`}
+                          placeholder="Description de l'emplacement"
+                        />
+                      </div>
+                      {errors.description && (
+                        <p className="text-red-500 text-xs flex items-center">
+                          <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                          {errors.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className='flex justify-between pt-2'>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleBackSecond}
                       className="text-sm py-2 px-4"
                     >
                       <ArrowLeft className="h-3.5 w-3.5 mr-2" />
