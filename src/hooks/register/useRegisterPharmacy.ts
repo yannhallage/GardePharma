@@ -7,19 +7,33 @@ export const useRegisterPharmacy = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const register = async (credentials: PharmacyRegister): Promise<PharmacyRegisterResponse | null> => {
+    const register = async (
+        credentials: PharmacyRegister
+    ): Promise<PharmacyRegisterResponse | null> => {
         setLoading(true);
         setError(null);
+
+        let payload: PharmacyRegister | FormData = credentials;
+
+        if (credentials.images instanceof File) {
+            const formData = new FormData();
+            Object.entries(credentials).forEach(([key, value]) => {
+                if (key === 'images' && value) {   // <-- corriger ici
+                    formData.append('images', value as File);  // 'photo' doit matcher avec upload.single("photo")
+                } else if (value !== undefined && value !== null) {
+                    formData.append(key, String(value));
+                }
+            });
+            payload = formData;
+        }
+
+
         try {
-            const response = await registerPharmacyService.register(credentials);
-            console.log('Réponse inscription pharmacie:', response);
+            const response = await registerPharmacyService.register(payload);
 
             if (response && response.token && response.user) {
-                try {
-                    LocalStorageInscriptionPharmacie(response);
-                } catch (storageError) {
-                    console.error('Erreur lors de l’écriture de la session', storageError);
-                }
+                console.log(response)
+                LocalStorageInscriptionPharmacie(response);
             }
 
             return response;
@@ -33,3 +47,4 @@ export const useRegisterPharmacy = () => {
 
     return { register, loading, error };
 };
+

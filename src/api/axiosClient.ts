@@ -9,9 +9,10 @@ const urlPublic = import.meta.env.VITE_API_URL_PUBLIC;
 
 export const axiosAuth = axios.create({
   baseURL: urlAuth,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // headers: { "Content-Type": "multipart/form-data" },
+  // headers: {
+  //   'Content-Type': 'application/json',
+  // },
 });
 
 export const axiosPharma = axios.create({

@@ -65,7 +65,7 @@ export const LocalStorageInscriptionPharmacie = (response: PharmacyRegisterRespo
         userLieu: response.user.lieu,
         userCommune: response.user.commune,
         identificationPharma: response.user.identification,
-        userId: response.user._id,
+        userId: response.user.id,
         userNom: response.user.nom_pharmacie,
         userPrenom: response.user.chef_pharmacie,
     });
