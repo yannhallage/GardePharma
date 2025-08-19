@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
@@ -28,7 +28,7 @@ const PlanningPage = ({ onAdd }: PlanningPageProps) => {
   const [typeFilter, setTypeFilter] = useState('Tous');
   const [modalOpen, setModalOpen] = useState(false);
   const { gardes, loading, error } = useGardes(getSession()?.userId ?? '', 'pharmacy');
-
+  const [localGardes, setLocalGardes] = useState(gardes || []);
   const { updateGarde } = useUpdateGarde()
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [eventActionModalOpen, setEventActionModalOpen] = useState(false);
@@ -36,7 +36,12 @@ const PlanningPage = ({ onAdd }: PlanningPageProps) => {
   const [proposedDate, setProposedDate] = useState('');
   const [recupererID, setRecupererID] = useState('')
 
-  const gardeEvents = gardes
+  useEffect(() => {
+    setLocalGardes(gardes || []);
+  }, [gardes]);
+
+
+  const gardeEvents = localGardes
     .filter((garde) => garde.statut?.toLowerCase() === 'en cours')
     .map((garde) => {
       let colors = {
@@ -109,7 +114,7 @@ const PlanningPage = ({ onAdd }: PlanningPageProps) => {
     setSelectedEvent(info.event);
     setEventComment('');
     setProposedDate('');
-    setRecupererID(info.event.id);   // ← stocke l'id ici
+    setRecupererID(info.event.id);
     setEventActionModalOpen(true);
   }
 
@@ -136,6 +141,7 @@ const PlanningPage = ({ onAdd }: PlanningPageProps) => {
     try {
       updateGarde(userId, dataSending).then(() => {
         setTimeout(() => {
+          setLocalGardes((prev) => prev.filter((g) => g._id !== recupererID));
           toast.success("Votre modification sera étudiée par l'admin");
           setEventActionModalOpen(false);
         }, 1000);

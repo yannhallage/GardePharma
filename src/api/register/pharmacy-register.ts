@@ -4,6 +4,6 @@ import type { PharmacyRegister, PharmacyRegisterResponse } from '@/types/registe
 
 
 export const registerPhamarcy = {
-    registerPhamarcy: (data: PharmacyRegister) =>
-        http.post<PharmacyRegisterResponse>(axiosAuth,'/inscription', data),
+    registerPhamarcy: (data: PharmacyRegister | FormData) =>
+        http.post<PharmacyRegisterResponse>(axiosAuth, '/inscription', data),
 };

@@ -36,6 +36,7 @@ export const useAuthAdmin = () => {
         setError(null);
         try {
             const response = await authService.loginAdmin(credentials);
+            console.log(response)
             LocalStorage(response)
             return response;
         } catch (err: any) {

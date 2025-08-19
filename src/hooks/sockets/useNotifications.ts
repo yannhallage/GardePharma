@@ -2,15 +2,13 @@
 import { useEffect, useState } from 'react';
 import { initSocket } from '@/api/sockets/socket';
 import { onNotification, offNotification } from '@/services/sockets/notificationService';
-import { toast } from 'react-hot-toast';
+// import { toast } from 'react-hot-toast';
 
 export const useNotification = (userId: string) => {
     const [lastNotification, setLastNotification] = useState<string | null>(null);
     useEffect(() => {
         if (!userId) return;
 
-        // Initialise la connexion socket
-        // console.log(userId)
         initSocket(userId);
 
         const handleNotification = (data: { message: string }) => {

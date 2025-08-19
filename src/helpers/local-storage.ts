@@ -44,6 +44,10 @@ export const LocalStorage = (response: AuthentificationResponse | AuthAdminRespo
         userType: response.user.userType,
         userNumero: response.user.numero,
         userId: response.user.id,
+        userLieu: response.user.lieu,
+        identificationPharma: response.user.identification,
+        userCommune: response.user.commune,
+        userDetails: response.user.details,
         userNom: response.user.nom,
         userPrenom: response.user.prenom,
     })
@@ -55,25 +59,40 @@ export const LocalStorageInscriptionPharmacie = (response: PharmacyRegisterRespo
     setSession({
         authToken: response.token,
         userEmail: response.user.email,
-        userType: response.user.userType, // sécurité sur userType ou role
+        userType: response.user.userType,
         userNumero: response.user.numero,
+        userDetails: response.user.details,
+        userLieu: response.user.lieu,
+        userCommune: response.user.commune,
+        identificationPharma: response.user.identification,
         userId: response.user.id,
         userNom: response.user.nom_pharmacie,
         userPrenom: response.user.chef_pharmacie,
     });
+
     return console.log('Session enregistrée avec succès');
 }
 export const LoginPharmacy = (response: AuthentificationResponse) => {
     setSession({
-        authToken: response.token,
-        userEmail: response.user.email,
-        userType: response.user.userType, // sécurité sur userType ou role
-        userNumero: response.user.numero,
-        userId: response.user.identification,
+        userIdentification: response.user.identification,
+        userId: response.user._id,
         userNom: response.user.nom_pharmacie,
         userPrenom: response.user.chef_pharmacie,
+        userDetails: response.user.details,
+        userLieu: response.user.lieu,
+        userCommune: response.user.commune,
+        userNumero: response.user.numero,
+        authToken: response.token,
+        userEmail: response.user.email,
+        userType: response.user.userType,
     });
     return console.log('Session enregistrée avec succès');
+
+    // identificationPharma: response.user.identification,
+    // userId: response.user._id,
+    // userNom: response.user.nom_pharmacie,
+    // userPrenom: response.user.chef_pharmacie,
+    // return console.log('Session enregistrée avec succès');
 }
 
 
@@ -84,7 +103,11 @@ export const getSession = () => {
     const userId = localStorage.getItem('userId');
     const userNom = localStorage.getItem('userNom');
     const userNumero = localStorage.getItem('userNumero');
+    const userIdentification = localStorage.getItem('userIdentification');
     const userPrenom = localStorage.getItem('userPrenom');
+    const userLieu = localStorage.getItem('userLieu');
+    const userDetails = localStorage.getItem('userDetails');
+    const userCommune = localStorage.getItem('userCommune');
 
     if (!token || !userEmail || !userType) return null;
 
@@ -95,7 +118,11 @@ export const getSession = () => {
         userType,
         userId,
         userNom,
+        userIdentification,
+        userDetails,
+        userLieu,
         userPrenom,
+        userCommune,
         userNumero
     };
 };

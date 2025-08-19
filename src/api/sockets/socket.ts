@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 
 let socket: ReturnType<typeof io> | null = null;
 // const socketUrl = import.meta.env.VITE_API_URL_SOCKET;
-const socketUrl = `http://localhost:5000`;
+const socketUrl = `http://localhost:1969`;
 
 export const initSocket = (userId: string) => {
     if (!socket) {

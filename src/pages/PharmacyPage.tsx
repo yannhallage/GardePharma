@@ -1,5 +1,6 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home, Bell } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -16,6 +17,7 @@ import DashboardPage from './pharmacy/DashboardPage';
 import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
 
+
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
@@ -24,10 +26,7 @@ import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { removeSession } from '@/helpers/local-storage';
 import { getSession } from '@/helpers/local-storage';
 import { NotificationsDialogExample } from './AdminDashboard';
-// import { useNotifications } from '@/hooks/sockets/useNotifications';
 
-
-// const pharmacyName = getSession()?.userNom;
 
 interface ReportModalProps {
   open: boolean;
@@ -37,10 +36,12 @@ interface ReportModalProps {
 const navItems = [
   { icon: Home, label: 'Accueil', key: 'Accueil' },
   { icon: CalendarIcon, label: 'Planning', key: 'Planning' },
-  { icon: ClipboardList, label: 'Mes Gardes', key: 'Mes Gardes' },
+  { icon: ClipboardList, label: `Mes Gardes`, key: 'Mes Gardes', showBadge: true },
   { icon: ClipboardList, label: 'Historique', key: 'Historique' },
   { icon: Settings, label: 'Modifier mon compte', key: 'Profil' },
 ];
+
+
 
 const GARDE_EVENTS_FC = [
   {
@@ -190,25 +191,35 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!dateGarde || !type) {
+    if (!dateGarde || !type || !getSession()?.userId) {
       toast.error("Veuillez remplir tous les champs obligatoires");
       return;
     }
+    const userId = getSession()?.userId;
+    const userCommune = getSession()?.userCommune;
+    const userResponsable = getSession()?.userPrenom;
+    const userNom = getSession()?.userNom;
+    const userIdentification = getSession().userIdentification
 
     const gardeData = {
-      // reference: `GARDE-${Date.now()}`,  
-      date: dateGarde,
+      reference: uuidv4(),
+      // date: dateGarde,
+      date: new Date(`${dateGarde}T00:00:00.000Z`).toISOString(),
       type: type,
-      nom_pharmacie: "",
-      responsable: "",
-      commune: "",
+      nom_pharmacie: userNom,
+      userId: userId,
+      identification_pharma: userIdentification,
+      responsable: userResponsable,
+      commune: userCommune,
       statut: "en attente",
       commentaire: comment,
     };
 
+    console.log(gardeData)
     try {
-      await create(gardeData);
-      toast.success("Garde signalée avec succès !");
+
+      await create(gardeData, getSession()?.userId);
+      toast.success("Garde!");
       onClose();
       setDateGarde("");
       setType("Jour");
@@ -218,6 +229,7 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
       onClose();
     }
   };
+
 
 
   return (
@@ -311,7 +323,14 @@ const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; on
                   setOpenModal(true)
                 }}
               >
-                <Bell />
+                <div className="relative inline-block">
+                  {/* Icône de cloche */}
+                  <Bell className="w-6 h-6 text-gray-700" />
+
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
+                    {localStorage.getItem('nombreDeNotifications') ? localStorage.getItem('nombreDeNotifications') : '0'}
+                  </span>
+                </div>
               </span>
               <Button variant="outline" size="sm"
                 onClick={() => {

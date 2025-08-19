@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 // import { Input } from '@/components/ui/input';
 // import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
-import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, Users, Bell, UserCog, Home, History, BellDot } from 'lucide-react';
+import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, Users, Bell, UserCog, Home, History } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import FullCalendarView from '../components/admin/FullCalendarView';
 import ExportPlanningButton from '../components/admin/ExportPlanningButton';
@@ -20,7 +20,7 @@ import AdminHistory from '../components/admin/AdminHistory';
 import { useNotification } from '@/hooks/sockets/useNotifications';
 import ProfileForm from '../components/admin/ProfileForm';
 import { getSession, removeSession } from '@/helpers/local-storage';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 import { useNotifications } from '@/hooks/useNotifications';
 // import { Label } from '@/components/ui/label';
 
@@ -298,13 +298,21 @@ function ProfileFormSection() {
 
 export function NotificationsDialogExample({ open, onClose }: NotificationsDialogExampleProps) {
   const [pharmacyId] = useState(getSession()?.userId ?? '');
-  const lastNotification = useNotification(pharmacyId); // Hook pour la dernière notif
-  const { notifications, loading } = useNotifications(pharmacyId);
 
-  // Crée une liste combinée : notifications existantes + dernière notif si elle n'est pas déjà incluse
+  const lastNotification = useNotification(pharmacyId);
+  const { notifications, loading } = useNotifications();
+
+
   const allNotifications = lastNotification
     ? [{ message: lastNotification, date: new Date().toISOString() }, ...notifications]
     : notifications;
+
+  if (allNotifications.length) {
+    localStorage.setItem('nombreDeNotifications', allNotifications.length.toString())
+    // console.log(localStorage.getItem('nombreDeNotifications'))
+  } else {
+
+  }
 
   return (
     <div className="p-6">
@@ -323,20 +331,21 @@ export function NotificationsDialogExample({ open, onClose }: NotificationsDialo
 
             {!loading && allNotifications.length > 0 && allNotifications.map((notif, index) => {
               // Déterminer le titre en fonction du message (exemple)
-              let title = 'Information';
-              if (/validation/i.test(notif.message)) title = 'Validation';
-              else if (/alerte/i.test(notif.message)) title = 'Alerte';
-              else if (/rappel/i.test(notif.message)) title = 'Rappel';
+              let messageNotification = `${notif.message}`;
+              // let title = 'Information';
+              // if (/validation/i.test(notif.message)) title = 'Validation';
+              // else if (/alerte/i.test(notif.message)) title = 'Alerte';
+              // else if (/rappel/i.test(notif.message)) title = 'Rappel';
 
               // Icônes et couleurs selon le titre
               let icon, bgColor, textColor;
-              switch (title) {
-                case 'Validation':
+              switch (messageNotification) {
+                case "Votre garde a été acceptée par l'admin":
                   icon = <CheckCircle className="text-green-600 w-5 h-5" />;
                   bgColor = "bg-green-50";
                   textColor = "text-green-800";
                   break;
-                case 'Alerte':
+                case "Votre garde a été supprimée par l'admin":
                   icon = <AlertTriangle className="text-red-600 w-5 h-5" />;
                   bgColor = "bg-red-50";
                   textColor = "text-red-800";
@@ -361,7 +370,7 @@ export function NotificationsDialogExample({ open, onClose }: NotificationsDialo
                     <div className="mt-1">{icon}</div>
                     <div className="flex-1">
                       <div className="flex justify-between items-center">
-                        <h3 className={`font-semibold ${textColor}`}>{title}</h3>
+                        <h3 className={`font-semibold ${textColor}`}>{messageNotification}</h3>
                         <span className="text-xs text-gray-500 bg-white border border-gray-200 rounded-full px-2 py-0.5">
                           {new Date(notif.date).toLocaleDateString()}
                         </span>

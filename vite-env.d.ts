@@ -6,6 +6,7 @@ interface ImportMetaEnv {
     readonly VITE_API_URL_ADMIN: string;
     readonly VITE_API_URL_USER: string;
     readonly VITE_API_URL_SOCKET: string;
+    readonly VITE_API_URL_PUBLIC: string;
 }
 
 interface ImportMeta {

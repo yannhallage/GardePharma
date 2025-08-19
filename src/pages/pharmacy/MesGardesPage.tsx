@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { useGardes } from '@/hooks/useGardes';
 
 import { getSession } from '@/helpers/local-storage';
-import { Phone,RefreshCcw } from 'lucide-react';
+
+import { Phone, RefreshCcw } from 'lucide-react';
 
 // const GARDE_DATA = [
 //   {
@@ -46,7 +47,6 @@ import { Phone,RefreshCcw } from 'lucide-react';
 
 const MesGardesPage = () => {
   const { gardes, loading, error } = useGardes(getSession()?.userId ?? '', 'pharmacy');
-
   return (
     <Card className="border border-gray-200 bg-white shadow-sm rounded-xl overflow-hidden">
       <CardHeader className="border-b border-gray-100 bg-gray-50 px-6 py-4">
