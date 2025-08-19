@@ -10,14 +10,18 @@ interface Pharmacy {
   name: string;
   address: string;
   phone: string;
+  mail: string;
   coordinates: [number, number];
   isOnDuty: boolean;
   dutyHours?: string;
   rating: number;
   distance: string;
+  description: string;
   capacity: number;
   logo: string;
   services?: string[];
+  commune: string;
+  details: string;
 }
 
 interface SidebarProps {
@@ -203,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <label className="block text-xs font-medium text-neutral-700 mb-1">
                 Trier par :
@@ -247,16 +251,15 @@ const Sidebar: React.FC<SidebarProps> = ({
           {pharmacies.map((pharmacy) => (
             <div
               key={pharmacy.id}
-              className={`pharmacy-item ${
-                selectedPharmacy?.id === pharmacy.id ? 'selected' : ''
-              }`}
+              className={`pharmacy-item ${selectedPharmacy?.id === pharmacy.id ? 'selected' : ''
+                }`}
               onClick={() => onPharmacySelect(pharmacy)}
             >
               <div className="flex items-start space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center text-sm">
                   {pharmacy.logo}
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-neutral-800 truncate text-sm">{pharmacy.name}</h3>
                   <p className="text-xs text-neutral-600">{pharmacy.distance}</p>
@@ -270,13 +273,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <Badge variant="destructive" className="mt-1 text-xs px-2 py-0.5">Fermé</Badge>
                   )}
                 </div>
-                
+
                 <div className="flex items-center space-x-1">
                   <Star className="h-3 w-3 text-yellow-500 fill-current" />
                   <span className="text-xs text-neutral-600">{pharmacy.rating}</span>
                 </div>
               </div>
-              
+
               {/* Capacity indicator */}
               {pharmacy.isOnDuty && (
                 <div className="mt-2 flex items-center justify-between">
@@ -342,7 +345,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                               <p><strong>Note:</strong> {pharmacy.rating}/5</p>
                             </div>
                           </div>
-                          
+
                           <div>
                             <h4 className="font-medium text-neutral-800 mb-1 text-xs">Services disponibles</h4>
                             <div className="flex flex-wrap gap-1">
@@ -353,7 +356,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                               ))}
                             </div>
                           </div>
-                          
+
                           {pharmacy.isOnDuty && (
                             <div>
                               <h4 className="font-medium text-neutral-800 mb-1 text-xs">Horaires de garde</h4>
@@ -362,7 +365,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                               </Badge>
                             </div>
                           )}
-                          
+
                           <div className="flex space-x-2 pt-2">
                             <Button onClick={() => onCall(pharmacy)} className="flex-1 text-xs h-8">
                               <Phone className="h-3 w-3 mr-1" />

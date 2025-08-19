@@ -43,7 +43,7 @@ export const LocalStorage = (response: AuthentificationResponse | AuthAdminRespo
         userEmail: response.user.email,
         userType: response.user.userType,
         userNumero: response.user.numero,
-        userId: response.user._id,
+        userId: response.user.id,
         userLieu: response.user.lieu,
         identificationPharma: response.user.identification,
         userCommune: response.user.commune,

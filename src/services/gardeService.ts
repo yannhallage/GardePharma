@@ -2,6 +2,7 @@
 import type { AttributCreerGarde, ListGardByAdminResponse } from '../types/garde';
 import type { UpdateGardes } from '../types/garde';
 import { GardeAPI } from '../api/garde.api';
+import type { PharmacyGardeResponse, RawPharmacyFromBackend } from '../types/PharmacyGardeInfo';
 import { http, axiosAdmin } from '@/api/axiosClient';
 import { getSession } from '@/helpers/local-storage';
 
@@ -39,7 +40,7 @@ export const GardeService = {
   updateOrDeleteGarde: (payload: UpdateOrDeleteGardePayload) => {
     const session_id = getSession()?.userId;
     if (!session_id) throw new Error("Utilisateur non identifié");
-    
+
     return GardeAPI.updateGarde(payload, session_id);
   },
 
@@ -50,4 +51,11 @@ export const GardeService = {
   ): Promise<AttributCreerGarde> => {
     return await GardeAPI.updateStatus(id, statut);
   },
+
+
+  // obtenir toutes les pharmacies de garde
+  ObtenirToutesLesPharmaciesDeGardes: async (): Promise<RawPharmacyFromBackend> => {
+    return await GardeAPI.ObetenirToutesLesGardes();
+  },
+
 };
