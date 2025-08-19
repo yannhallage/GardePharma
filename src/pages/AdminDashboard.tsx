@@ -298,8 +298,10 @@ function ProfileFormSection() {
 
 export function NotificationsDialogExample({ open, onClose }: NotificationsDialogExampleProps) {
   const [pharmacyId] = useState(getSession()?.userId ?? '');
+
   const lastNotification = useNotification(pharmacyId);
   const { notifications, loading } = useNotifications();
+
 
   const allNotifications = lastNotification
     ? [{ message: lastNotification, date: new Date().toISOString() }, ...notifications]

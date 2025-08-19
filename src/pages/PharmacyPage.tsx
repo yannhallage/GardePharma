@@ -16,7 +16,6 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import DashboardPage from './pharmacy/DashboardPage';
 import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
-// import { setStorageItem } from "@/helpers/storageEvents";
 
 
 import ProfilPage from './pharmacy/ProfilPage';
@@ -27,7 +26,7 @@ import { useCreateGarde } from '@/hooks/useCreerGarde';
 import { removeSession } from '@/helpers/local-storage';
 import { getSession } from '@/helpers/local-storage';
 import { NotificationsDialogExample } from './AdminDashboard';
-// import { useNotifications } from '@/hooks/sockets/useNotifications';
+
 
 interface ReportModalProps {
   open: boolean;
