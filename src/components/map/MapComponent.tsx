@@ -263,6 +263,8 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
   const containerRef = useRef<HTMLDivElement | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const [selectedPharmacy, setSelectedPharmacy] = useState<any>(null);
+  const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
+
 
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
@@ -296,6 +298,24 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
   }, []);
 
   useEffect(() => {
+    if (!navigator.geolocation) {
+      console.warn("La géolocalisation n'est pas supportée par ce navigateur");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserPosition([latitude, longitude]);
+
+        mapRef.current?.setView([latitude, longitude], 14);
+      },
+      (err) => {
+        console.error("Erreur de géolocalisation :", err);
+      }
+    );
+  }, []);
+  useEffect(() => {
     if (!mapRef.current) return;
 
     mapRef.current.eachLayer((layer) => {
@@ -322,6 +342,20 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
         popupAnchor: [0, -44],
       });
 
+      if (userPosition && mapRef.current) {
+        const userIcon = L.divIcon({
+          html: `<div class="user-marker"></div>`,
+          className: "user-marker-container",
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        });
+
+        L.marker(userPosition, { icon: userIcon })
+          .addTo(mapRef.current)
+          .bindPopup("📍 Vous êtes ici")
+          .openPopup();
+      }
+
       const marker = L.marker([lat, lng], { icon: customIcon }).addTo(mapRef.current!);
 
       marker.bindPopup(`
@@ -343,6 +377,24 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
       });
     });
   }, [pharmacies, onPharmacySelect, onMarkerClick]);
+
+  useEffect(() => {
+    if (!mapRef.current || !userPosition) return;
+
+    const userIcon = L.divIcon({
+      html: `<div class="user-marker"></div>`,
+      className: "user-marker-container",
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    });
+
+    // Astuce : on ajoute un flag pour distinguer ce marker
+    const userMarker = L.marker(userPosition, { icon: userIcon });
+    (userMarker as any).isUserMarker = true;
+
+    userMarker.addTo(mapRef.current).bindPopup("📍 Vous êtes ici").openPopup();
+
+  }, [userPosition]);
 
   return (
     <div className="relative h-full">
