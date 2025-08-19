@@ -17,16 +17,20 @@ interface Pharmacy {
   name: string;
   address: string;
   phone: string;
+  mail: string;
   coordinates: [number, number];
   isOnDuty: boolean;
   dutyHours?: string;
   rating: number;
   distance: string;
+  description: string;
   capacity: number;
   logo: string;
   services?: string[];
   commune: string;
   details: string;
+  image?: string;       // ⚡ Ici l'image en Base64 "data:image/jpeg;base64,..."
+  imageType?: string;
 }
 
 interface MapComponentProps {
@@ -264,8 +268,8 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
     if (mapRef.current || !containerRef.current) return;
 
     const map = L.map(containerRef.current, {
-      center: [7.54, -5.55], // Côte d'Ivoire
-      zoom: 7,
+      center: [5.3054398, -3.990956], // Côte d'Ivoire
+      zoom: 12.3,
       zoomControl: false,
       attributionControl: false
     });
@@ -327,7 +331,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
           <div>Tél: ${pharmacy.phone}</div>
           <div>Services: ${pharmacy.services?.join(', ')}</div>
         </div>
-      `, { closeButton: false, offset: L.point(0, -44) });
+      `, { closeButton: false, offset: L.point(0, -2) });
 
       marker.on('mouseover', () => marker.openPopup());
       marker.on('mouseout', () => marker.closePopup());
@@ -361,7 +365,8 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 50 }}
                 transition={{ duration: 0.3 }}
-                src="https://www.ville-clichy.fr/uploads/Image/4b/IMF_ACCROCHE/GAB_CLICHY/58792_024_pharmacie-de-garde.jpg"
+                // src="https://www.ville-clichy.fr/uploads/Image/4b/IMF_ACCROCHE/GAB_CLICHY/58792_024_pharmacie-de-garde.jpg"
+                src={selectedPharmacy.imageUrl || "https://www.ville-clichy.fr/uploads/Image/4b/IMF_ACCROCHE/GAB_CLICHY/58792_024_pharmacie-de-garde.jpg"}
                 alt={selectedPharmacy.name}
                 className="w-full h-full object-cover"
               />
@@ -375,10 +380,12 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
                 tél: <a href={`tel:${selectedPharmacy.phone}`} className='hover:text-blue-500 hover:underline'>{selectedPharmacy.phone}</a>
               </p>
               <p className="text-gray-700 flex items-center gap-2">
-                mail: {!selectedPharmacy.phone ? "contact@gardepharma.com" : "contact@gardepharma.com"}
+                mail: {selectedPharmacy.mail ? selectedPharmacy.mail : "contact@gardepharma.com"}
               </p>
               <p className="text-gray-700 flex items-center gap-2">
-                horaires : {selectedPharmacy.dutyHours ? selectedPharmacy.dutyHours : ""}
+                {/* horaires : {selectedPharmacy.dutyHours ? selectedPharmacy.dutyHours : ""} */}
+                horaires : <span className="border pr-1 pl-1 rounded-md text-[12px] text-green-700">ouvert</span>
+                <span className="border pr-1 pl-1 rounded-md text-[12px]">fermé a 21:00</span>
               </p>
               <p className="text-gray-600 text-sm flex items-center gap-1">
                 <span className="font-semibold flex items-center gap-1">
@@ -407,7 +414,9 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ pharmacies, onPharmacySelect, o
               <div className="space-y-2 mt-4">
                 <h3 className="text-lg font-semibold">Description</h3>
                 <p className="text-gray-500 text-sm">
-                  Bienvenue dans notre pharmacie. Nous offrons des services de qualité, avec un personnel attentif à vos besoins.
+                  {/* Bienvenue dans notre pharmacie. Nous offrons des services de qualité, avec un personnel attentif à vos besoins. */}
+                  {selectedPharmacy.description}
+
                 </p>
               </div>
 

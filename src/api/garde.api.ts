@@ -1,6 +1,7 @@
 // src/api/gardeApi.ts
 import type { AttributCreerGarde, ListGardByAdminResponse } from '../types/garde';
-import { axiosAdmin, axiosPharma } from './axiosClient';
+import type { PharmacyGardeResponse, RawPharmacyFromBackend } from '../types/PharmacyGardeInfo';
+import { axiosAdmin, axiosPharma, axiosPublic } from './axiosClient';
 
 interface UpdateOrDeleteGardePayload {
   id_garde: string;
@@ -11,9 +12,15 @@ interface UpdateOrDeleteGardePayload {
 
 export const GardeAPI = {
   getAll: async (id: string): Promise<ListGardByAdminResponse> => {
-     const res = await axiosAdmin.get(`/gererGardes/${id}`);
+    const res = await axiosAdmin.get(`/gererGardes/${id}`);
     return res.data;
   },
+
+  ObetenirToutesLesGardes: async (): Promise<RawPharmacyFromBackend> => {
+    const res = await axiosPublic.get(`/touteslespharmaciesdegarde`);
+    return res.data;
+  },
+
   getById: async (id: string): Promise<AttributCreerGarde> => {
     const res = await axiosPharma.get(`/consulterGardes/${id}`);
     return res.data;
@@ -27,7 +34,7 @@ export const GardeAPI = {
     return res.data;
   },
 
-  updateGarde: (payload: UpdateOrDeleteGardePayload,id: string) => {
+  updateGarde: (payload: UpdateOrDeleteGardePayload, id: string) => {
     return axiosAdmin.post(`/sousrequete/${id}`, payload)
   },
 
