@@ -7,11 +7,12 @@ export function useAddPharmacyUser() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const add = async (data: AddPharmacyUserPayload) => {
+    const add = async (data: AddPharmacyUserPayload, userID: string) => {
+
         setLoading(true);
         setError(null);
         try {
-            const response = await userService.addPharmacyUser(data);
+            const response = await userService.addPharmacyUser(data, userID);
             return response;
         } catch (err: any) {
             setError(err?.response?.data?.message || 'Une erreur est survenue');

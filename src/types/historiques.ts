@@ -1,3 +1,4 @@
+import type { AdminHistoryItem } from './admin-history.type';
 
 export interface Historique_Pharmacy {
   reference: string;
@@ -9,3 +10,10 @@ export interface Historique_Pharmacy {
   statut: string;
   commentaire: string;
 }
+
+
+export type HistoriqueApiResponse = {
+  success: boolean;
+  message: string;
+  data: AdminHistoryItem[];
+};

@@ -1,13 +1,13 @@
 
 import { userApi } from '../api/ListesPharmacy';
-import type { AddPharmacyUserPayload } from '../types/ListesPharmacy.type';
+import type { ListPharmacyByAdminResponse, AddPharmacyUserPayload } from '../types/ListesPharmacy.type';
 
 export const userService = {
-    addPharmacyUser: async (data: AddPharmacyUserPayload) => {
-        return await userApi.createPharmacyUser(data);
+    addPharmacyUser: async (data: AddPharmacyUserPayload, id: string) => {
+        return await userApi.createPharmacyUser(data, id);
     },
-    GetAllListePharmacyByAdmin: async (): Promise<AddPharmacyUserPayload[]> => {
-        return await userApi.getListePharmacy();
+    GetAllListePharmacyByAdmin: async (id: string): Promise<ListPharmacyByAdminResponse> => {
+        return await userApi.getListePharmacy(id);
     },
     deletePharmacy: async (id: string): Promise<void> => {
         return await userApi.deletePharmacy(id);

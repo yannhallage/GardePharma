@@ -4,7 +4,7 @@ import type { PharmacyRegister, PharmacyRegisterResponse } from '../../types/reg
 
 
 export const registerPharmacyService = {
-    register: async (data: PharmacyRegister): Promise<PharmacyRegisterResponse> => {
+    register: async (data: PharmacyRegister | FormData): Promise<PharmacyRegisterResponse> => {
         return await registerPhamarcy.registerPhamarcy(data);
     }
 };

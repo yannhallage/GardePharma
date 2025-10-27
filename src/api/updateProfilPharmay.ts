@@ -1,7 +1,7 @@
 import type { UserProfile } from "@/types/UserProfilePharmacy";
-import { http } from "./axiosClient";
+import { http, axiosPharma } from "./axiosClient";
 
 export const updateProfilPharmacy = {
-    get: () => http.get<UserProfile>('/user/profile'),
-    update: (data: Partial<UserProfile>) => http.put<UserProfile, Partial<UserProfile>>('/user/profile', data),
+    // get: () => http.get<UserProfile>('/user/profile'),
+    update: (data: Partial<UserProfile>, id: string) => http.put<UserProfile, Partial<UserProfile>>(axiosPharma, `/modifierProfil/${id}`, data),
 }

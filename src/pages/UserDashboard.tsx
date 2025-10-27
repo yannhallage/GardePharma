@@ -5,92 +5,225 @@ import MapComponent from '../components/map/MapComponent';
 import PharmacyCards from '../components/pharmacy/PharmacyCards';
 import { Toaster } from '../components/ui/toast';
 import { useToast } from '../hooks/use-toast';
+import { usePharmaciesDeGardes } from '@/hooks/usePublicGarde';
 
 // Données de test pour les pharmacies
 const mockPharmacies = [
+  // --- Treichville ---
   {
-    id: '1',
-    name: 'Pharmacie du Centre',
-    address: '123 Rue de la Paix, 75001 Paris',
-    phone: '01 42 34 56 78',
-    coordinates: [48.8566, 2.3522] as [number, number],
+    id: 'treich-1',
+    name: 'Pharmacie Treichville 1',
+    address: 'Rue 12, Treichville',
+    commune: 'Treichville',
+    phone: '+225 01 23 45 67',
+    coordinates: [5.3047502, -4.0096444] as [number, number],
     isOnDuty: true,
-    dutyHours: '20h00 - 08h00',
-    rating: 4.5,
-    distance: '0.5 km',
-    capacity: 100,
-    logo: '🏥',
-    services: ['Médicaments', 'Conseils', 'Vaccination']
-  },
-  {
-    id: '2',
-    name: 'Pharmacie Saint-Michel',
-    address: '456 Boulevard Saint-Michel, 75005 Paris',
-    phone: '01 43 25 67 89',
-    coordinates: [48.8441, 2.3439] as [number, number],
-    isOnDuty: true,
-    dutyHours: '19h00 - 07h00',
-    rating: 4.2,
-    distance: '0.7 km',
-    capacity: 15,
-    logo: '💊',
-    services: ['Médicaments', 'Conseils']
-  },
-  {
-    id: '3',
-    name: 'Pharmacie de la Gare',
-    address: '789 Avenue de la République, 75011 Paris',
-    phone: '01 44 67 89 01',
-    coordinates: [48.8631, 2.3889] as [number, number],
-    isOnDuty: true,
-    dutyHours: '19h00 - 07h00',
-    rating: 4.0,
-    distance: '0.3 km',
-    capacity: 80,
-    logo: '🏪',
-    services: ['Médicaments', 'Conseils', 'Vaccination', 'Analyses']
-  },
-  {
-    id: '4',
-    name: 'Pharmacie du Quartier',
-    address: '321 Rue de Rivoli, 75001 Paris',
-    phone: '01 45 67 89 12',
-    coordinates: [48.8584, 2.2945] as [number, number],
-    isOnDuty: false,
     rating: 4.3,
-    distance: '0.2 km',
-    capacity: 0,
-    logo: '🏥',
-    services: ['Médicaments', 'Conseils']
-  },
-  {
-    id: '5',
-    name: 'Pharmacie de la Place',
-    address: '654 Place de la Concorde, 75008 Paris',
-    phone: '01 46 78 90 23',
-    coordinates: [48.8654, 2.3212] as [number, number],
-    isOnDuty: true,
-    dutyHours: '20h00 - 08h00',
-    rating: 4.1,
-    distance: '0.4 km',
-    capacity: 80,
+    distance: '1.2 km',
+    capacity: 90,
     logo: '💊',
     services: ['Médicaments', 'Conseils', 'Vaccination']
   },
-  {
-    id: '6',
-    name: 'Pharmacie de l\'Avenue',
-    address: '987 Avenue des Champs-Élysées, 75008 Paris',
-    phone: '01 47 89 01 34',
-    coordinates: [48.8698, 2.3077] as [number, number],
-    isOnDuty: true,
-    dutyHours: '19h00 - 07h00',
-    rating: 4.4,
-    distance: '2.1 km',
-    capacity: 100,
-    logo: '🏪',
-    services: ['Médicaments', 'Conseils', 'Vaccination', 'Analyses', 'Dermatologie']
-  }
+  // {
+  //   id: 'treich-2',
+  //   name: 'Pharmacie Treichville 2',
+  //   address: 'Boulevard de Marseille, Treichville',
+  //   commune: 'Treichville',
+  //   phone: '+225 01 23 45 68',
+  //   coordinates: [5.305686, -4.006521] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 4.0,
+  //   distance: '1.5 km',
+  //   capacity: 70,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Parapharmacie']
+  // },
+  // {
+  //   id: 'treich-3',
+  //   name: 'Pharmacie Treichville 3',
+  //   address: 'Rue du Canal, Treichville',
+  //   commune: 'Treichville',
+  //   phone: '+225 01 23 45 69',
+  //   coordinates: [5.306766, -4.010507] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.5,
+  //   distance: '1.8 km',
+  //   capacity: 80,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Conseils']
+  // },
+  // {
+  //   id: 'treich-4',
+  //   name: 'Pharmacie Treichville 4',
+  //   address: 'Avenue 16, Treichville',
+  //   commune: 'Treichville',
+  //   phone: '+225 01 23 45 70',
+  //   coordinates: [5.300746, -4.000238] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 3.9,
+  //   distance: '2.0 km',
+  //   capacity: 65,
+  //   logo: '💊',
+  //   services: ['Médicaments']
+  // },
+  // {
+  //   id: 'treich-5',
+  //   name: 'Pharmacie Treichville 5',
+  //   address: 'Boulevard du Port, Treichville',
+  //   commune: 'Treichville',
+  //   phone: '+225 01 23 45 71',
+  //   coordinates: [5.306336, -4.014826] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.2,
+  //   distance: '2.3 km',
+  //   capacity: 75,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Vaccination']
+  // },
+
+  // // --- Marcory ---
+  // {
+  //   id: 'marcory-1',
+  //   name: 'Pharmacie Marcory 1',
+  //   address: 'Rue 20, Marcory',
+  //   commune: 'Marcory',
+  //   phone: '+225 01 23 46 00',
+  //   coordinates: [5.303209, -3.984277] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 4.4,
+  //   distance: '3.0 km',
+  //   capacity: 95,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Conseils']
+  // },
+  // {
+  //   id: 'marcory-2',
+  //   name: 'Pharmacie Marcory 2',
+  //   address: 'Avenue Hibiscus, Marcory',
+  //   commune: 'Marcory',
+  //   phone: '+225 01 23 46 01',
+  //   coordinates: [5.302742, -3.980482] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.0,
+  //   distance: '3.3 km',
+  //   capacity: 85,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Parapharmacie']
+  // },
+  // {
+  //   id: 'marcory-3',
+  //   name: 'Pharmacie Marcory 3',
+  //   address: 'Rue du Canal, Marcory',
+  //   commune: 'Marcory',
+  //   phone: '+225 01 23 46 02',
+  //   coordinates: [5.305588, -3.983106] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 4.1,
+  //   distance: '3.5 km',
+  //   capacity: 70,
+  //   logo: '💊',
+  //   services: ['Médicaments']
+  // },
+  // {
+  //   id: 'marcory-4',
+  //   name: 'Pharmacie Marcory 4',
+  //   address: 'Boulevard du Gabon, Marcory',
+  //   commune: 'Marcory',
+  //   phone: '+225 01 23 46 03',
+  //   coordinates: [5.306661, -3.991025] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.3,
+  //   distance: '3.8 km',
+  //   capacity: 80,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Vaccination']
+  // },
+  // {
+  //   id: 'marcory-5',
+  //   name: 'Pharmacie Marcory 5',
+  //   address: 'Avenue 8, Marcory',
+  //   commune: 'Marcory',
+  //   phone: '+225 01 23 46 04',
+  //   coordinates: [5.309505, -3.992765] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 4.0,
+  //   distance: '4.0 km',
+  //   capacity: 60,
+  //   logo: '💊',
+  //   services: ['Médicaments']
+  // },
+  // {
+  //   id: 'marcory-6',
+  //   name: 'Pharmacie Marcory 6',
+  //   address: 'Rue du Stade, Marcory',
+  //   commune: 'Marcory',
+  //   phone: '+225 01 23 46 05',
+  //   coordinates: [5.302666, -3.969453] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.5,
+  //   distance: '4.2 km',
+  //   capacity: 90,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Conseils']
+  // },
+
+  // // --- Plateau ---
+  // {
+  //   id: 'plateau-1',
+  //   name: 'Pharmacie Plateau 1',
+  //   address: 'Boulevard de la République, Plateau',
+  //   commune: 'Plateau',
+  //   phone: '+225 01 23 47 00',
+  //   coordinates: [5.331086, -4.022268] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 4.6,
+  //   distance: '5.0 km',
+  //   capacity: 100,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Conseils', 'Vaccination']
+  // },
+  // {
+  //   id: 'plateau-2',
+  //   name: 'Pharmacie Plateau 2',
+  //   address: 'Avenue Marchand, Plateau',
+  //   commune: 'Plateau',
+  //   phone: '+225 01 23 47 01',
+  //   coordinates: [5.336840, -4.021778] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.3,
+  //   distance: '5.2 km',
+  //   capacity: 85,
+  //   logo: '💊',
+  //   services: ['Médicaments']
+  // },
+  // {
+  //   id: 'plateau-3',
+  //   name: 'Pharmacie Plateau 3',
+  //   address: 'Rue du Commerce, Plateau',
+  //   commune: 'Plateau',
+  //   phone: '+225 01 23 47 02',
+  //   coordinates: [5.333261, -4.026165] as [number, number],
+  //   isOnDuty: false,
+  //   rating: 4.1,
+  //   distance: '5.4 km',
+  //   capacity: 75,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Parapharmacie']
+  // },
+  // {
+  //   id: 'plateau-4',
+  //   name: 'Pharmacie Plateau 4',
+  //   address: 'Boulevard Carde, Plateau',
+  //   commune: 'Plateau',
+  //   phone: '+225 01 23 47 03',
+  //   coordinates: [5.322264, -4.018370] as [number, number],
+  //   isOnDuty: true,
+  //   rating: 4.4,
+  //   distance: '5.6 km',
+  //   capacity: 80,
+  //   logo: '💊',
+  //   services: ['Médicaments', 'Conseils']
+  // }
 ];
 
 const UserDashboard: React.FC = () => {
@@ -100,8 +233,9 @@ const UserDashboard: React.FC = () => {
   const [showOnlyOnDuty, setShowOnlyOnDuty] = useState(true);
   const [sortBy, setSortBy] = useState<'nearest' | 'rating' | 'name'>('nearest');
   const [selectedPharmacy, setSelectedPharmacy] = useState<any>(null);
+  const { data, loading, error } = usePharmaciesDeGardes()
 
-  const filteredPharmacies = mockPharmacies
+  const filteredPharmacies = data
     .filter(pharmacy => {
       const matchesSearch = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
@@ -208,22 +342,24 @@ const UserDashboard: React.FC = () => {
       <Header />
 
       <div className="dashboard-content">
-        <Sidebar
-          pharmacies={filteredPharmacies}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          showOnlyOnDuty={showOnlyOnDuty}
-          setShowOnlyOnDuty={setShowOnlyOnDuty}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          selectedPharmacy={selectedPharmacy}
-          onPharmacySelect={handlePharmacySelect}
-          onCall={handleCall}
-          onNavigate={handleNavigate}
-        />
 
+        <div className=''>
+          <Sidebar
+            pharmacies={filteredPharmacies}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            showOnlyOnDuty={showOnlyOnDuty}
+            setShowOnlyOnDuty={setShowOnlyOnDuty}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            selectedPharmacy={selectedPharmacy}
+            onPharmacySelect={handlePharmacySelect}
+            onCall={handleCall}
+            onNavigate={handleNavigate}
+          />
+        </div>
         <div className="main-area">
           {viewMode === 'map' ? (
             <MapComponent

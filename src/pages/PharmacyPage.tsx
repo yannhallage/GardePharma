@@ -1,6 +1,8 @@
 // @ts-nocheck
-import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar as CalendarIcon, ClipboardList, Settings, LogOut, PlusCircle, MapPin, Home, Bell } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -14,13 +16,18 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import DashboardPage from './pharmacy/DashboardPage';
 import PlanningPage from './pharmacy/PlanningPage';
 import MesGardesPage from './pharmacy/MesGardesPage';
+// import { setStorageItem } from "@/helpers/storageEvents";
+
+
 import ProfilPage from './pharmacy/ProfilPage';
 import History from '../components/pharmacy/History';
 import toast from 'react-hot-toast';
-import { useCreateGarde } from '@/hooks/useCreerGarde';
-import { removeSession } from '@/lib/local-storage';
 
-const pharmacyName = 'Pharmacie du Soleil';
+import { useCreateGarde } from '@/hooks/useCreerGarde';
+import { removeSession } from '@/helpers/local-storage';
+import { getSession } from '@/helpers/local-storage';
+import { NotificationsDialogExample } from './AdminDashboard';
+// import { useNotifications } from '@/hooks/sockets/useNotifications';
 
 interface ReportModalProps {
   open: boolean;
@@ -30,10 +37,12 @@ interface ReportModalProps {
 const navItems = [
   { icon: Home, label: 'Accueil', key: 'Accueil' },
   { icon: CalendarIcon, label: 'Planning', key: 'Planning' },
-  { icon: ClipboardList, label: 'Mes Gardes', key: 'Mes Gardes' },
+  { icon: ClipboardList, label: `Mes Gardes`, key: 'Mes Gardes', showBadge: true },
   { icon: ClipboardList, label: 'Historique', key: 'Historique' },
   { icon: Settings, label: 'Modifier mon compte', key: 'Profil' },
 ];
+
+
 
 const GARDE_EVENTS_FC = [
   {
@@ -83,58 +92,61 @@ const QuickStats = () => (
   </div>
 );
 
-const AccueilPage = () => (
-  <div className="flex flex-col gap-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Bonjour, {pharmacyName}. Voici un résumé de vos prochaines gardes.</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <QuickStats />
-      </CardContent>
-    </Card>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Gardes à venir</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-600">
-                <th className="py-2">Date</th>
-                <th>Type</th>
-                <th>État</th>
-                <th>Observations</th>
-              </tr>
-            </thead>
-            <tbody>
-              {GARDE_EVENTS_FC.map((garde, i) => (
-                <tr key={i} className="border-b last:border-0">
-                  <td className="py-2">{garde.start}</td>
-                  <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
-                  <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
-                  <td>-</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="text-sm text-gray-700 space-y-2">
-            <li>Pharmacie du Centre</li>
-            <li>Pharmacie de la Gare</li>
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
-  </div>
-);
+// const AccueilPage = () => {
+//   const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
+//   return (
+//     <div className="flex flex-col gap-8">
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>Bonjour, {pharmacyName}. Voici un résumé de vos prochaines gardes.</CardTitle>
+//         </CardHeader>
+//         <CardContent>
+//           <QuickStats />
+//         </CardContent>
+//       </Card>
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//         <Card>
+//           <CardHeader>
+//             <CardTitle>Gardes à venir</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <table className="w-full text-sm">
+//               <thead>
+//                 <tr className="text-left text-gray-600">
+//                   <th className="py-2">Date</th>
+//                   <th>Type</th>
+//                   <th>État</th>
+//                   <th>Observations</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {GARDE_EVENTS_FC.map((garde, i) => (
+//                   <tr key={i} className="border-b last:border-0">
+//                     <td className="py-2">{garde.start}</td>
+//                     <td>{garde.title.includes('🌙') ? 'Nuit' : 'Férié'}</td>
+//                     <td><span className={`px-2 py-1 rounded text-xs font-semibold ${garde.backgroundColor}`}>{garde.title.includes('🌙') ? 'En attente' : 'Refusée'}</span></td>
+//                     <td>-</td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </CardContent>
+//         </Card>
+//         <Card>
+//           <CardHeader>
+//             <CardTitle><MapPin className="mr-2 text-primary-600 inline" /> Pharmacies en garde aujourd'hui</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <ul className="text-sm text-gray-700 space-y-2">
+//               <li>Pharmacie du Centre</li>
+//               <li>Pharmacie de la Gare</li>
+//             </ul>
+//           </CardContent>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// }
 
 const CustomToolbar = ({ label, onNavigate }) => (
   <div className="flex items-center justify-between px-4 py-2 bg-white border-b rounded-t-lg">
@@ -180,25 +192,35 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!dateGarde || !type) {
+    if (!dateGarde || !type || !getSession()?.userId) {
       toast.error("Veuillez remplir tous les champs obligatoires");
       return;
     }
+    const userId = getSession()?.userId;
+    const userCommune = getSession()?.userCommune;
+    const userResponsable = getSession()?.userPrenom;
+    const userNom = getSession()?.userNom;
+    const userIdentification = getSession().userIdentification
 
     const gardeData = {
-      // reference: `GARDE-${Date.now()}`,  
-      date: dateGarde,
+      reference: uuidv4(),
+      // date: dateGarde,
+      date: new Date(`${dateGarde}T00:00:00.000Z`).toISOString(),
       type: type,
-      nom_pharmacie: "",
-      responsable: "",
-      commune: "",
-      statut: "en_attente",
+      nom_pharmacie: userNom,
+      userId: userId,
+      identification_pharma: userIdentification,
+      responsable: userResponsable,
+      commune: userCommune,
+      statut: "en attente",
       commentaire: comment,
     };
 
+    console.log(gardeData)
     try {
-      await create(gardeData);
-      toast.success("Garde signalée avec succès !");
+
+      await create(gardeData, getSession()?.userId);
+      toast.success("Garde!");
       onClose();
       setDateGarde("");
       setType("Jour");
@@ -208,6 +230,7 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
       onClose();
     }
   };
+
 
 
   return (
@@ -258,63 +281,100 @@ export const ReportModal = ({ open, onClose }: ReportModalProps) => {
   );
 };
 
-const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; onReport: () => void; children: React.ReactNode }> = ({ tab, setTab, onReport, children }) => (
-  <div className="min-h-screen bg-neutral-50">
-    {/* Header */}
-    <header className="bg-white shadow-sm border-b border-neutral-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-primary-600">GardePharma</h1>
+const AppLayoutPharmacy: React.FC<{ tab: string; setTab: (t: string) => void; onReport: () => void; children: React.ReactNode }> = ({ tab, setTab, onReport, children }) => {
+  // const [dateGarde, setDateGarde] = useState('');
+  // const [type, setType] = useState('');
+  // const [comment, setComment] = useState('');
+  // const [openReportModal, setOpenReportModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [pharmacyName, setPharmacyName] = useState(getSession()?.userNom ?? '')
+  // const [pharmacyId, setPharmacyId] = useState(getSession()?.userId ?? '')
+
+  // console.log(pharmacyId)
+  // if (pharmacyId) {
+  //   useNotifications(pharmacyId);
+  // }
+
+
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-neutral-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <h1 className="text-2xl font-bold text-primary-600">GardePharma</h1>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={onReport}
+              >
+                <PlusCircle className="h-4 w-4" />
+                Signaler une garde
+              </Button>
+              <span className="text-sm text-neutral-600">{pharmacyName}</span>
+              <span className='cursor-pointer'
+                onClick={() => {
+                  setOpenModal(true)
+                }}
+              >
+                <div className="relative inline-block">
+                  {/* Icône de cloche */}
+                  <Bell className="w-6 h-6 text-gray-700" />
+
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
+                    {localStorage.getItem('nombreDeNotifications') ? localStorage.getItem('nombreDeNotifications') : '0'}
+                  </span>
+                </div>
+              </span>
+              <Button variant="outline" size="sm"
+                onClick={() => {
+                  removeSession()
+                  navigate("/login")
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Déconnexion
+              </Button>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={onReport}
-            >
-              <PlusCircle className="h-4 w-4" />
-              Signaler une garde
-            </Button>
-            <span className="text-sm text-neutral-600">{pharmacyName}</span>
-            <Button variant="outline" size="sm"
-              onClick={() => {
-                removeSession()
-              }}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Déconnexion
-            </Button>
+        </div>
+      </header>
+      {/* Navigation */}
+      <nav className="bg-white border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            {navItems.map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setTab(item.key)}
+                className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-primary-600 border-primary-600' : 'text-neutral-600 border-transparent hover:text-primary-600 hover:border-primary-600'}`}
+              >
+                <item.icon className="h-4 w-4 mr-2" />
+                {item.label}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
-    </header>
-    {/* Navigation */}
-    <nav className="bg-white border-b border-neutral-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex space-x-8">
-          {navItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setTab(item.key)}
-              className={`flex items-center px-3 py-4 text-sm font-medium transition-colors border-b-2 ${tab === item.key ? 'text-primary-600 border-primary-600' : 'text-neutral-600 border-transparent hover:text-primary-600 hover:border-primary-600'}`}
-            >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </nav>
-    {/* Main Content */}
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {children}
-    </main>
-  </div>
-);
+      </nav>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {children}
+      </main>
+
+      <NotificationsDialogExample
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      />
+    </div>
+  );
+}
 
 const PharmacyPage: React.FC = () => {
   const [tab, setTab] = useState('Accueil');
